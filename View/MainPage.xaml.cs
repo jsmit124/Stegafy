@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging; 
+using Windows.UI.Xaml.Media.Imaging;
+using GroupNStegafy.IO;
 
 namespace GroupNStegafy.View
 {
@@ -23,6 +22,8 @@ namespace GroupNStegafy.View
         private double dpiX;
         private double dpiY;
         private WriteableBitmap modifiedImage;
+        private readonly FileWriter fileWriter;
+        private readonly FileReader fileReader;
 
         #endregion
 
@@ -35,6 +36,9 @@ namespace GroupNStegafy.View
             this.modifiedImage = null;
             this.dpiX = 0;
             this.dpiY = 0;
+
+            this.fileWriter = new FileWriter();
+            this.fileReader = new FileReader();
         }
 
         #endregion
@@ -43,7 +47,7 @@ namespace GroupNStegafy.View
 
         private async void openButton_Click(object sender, RoutedEventArgs e)
         {
-            var sourceImageFile = await this.selectSourceImageFile();
+            var sourceImageFile = await this.fileReader.SelectSourceImageFile();
             var copyBitmapImage = await this.MakeACopyOfTheFileToWorkOn(sourceImageFile);
 
             using (var fileStream = await sourceImageFile.OpenAsync(FileAccessMode.Read))
@@ -78,6 +82,11 @@ namespace GroupNStegafy.View
             }
         }
 
+        private void saveButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.fileWriter.SaveWritableBitmap(this.modifiedImage, this.dpiX, this.dpiY);
+        }
+
         private void giveImageRedTint(byte[] sourcePixels, uint imageWidth, uint imageHeight)
         {
             for (var i = 0; i < imageHeight; i++)
@@ -91,21 +100,6 @@ namespace GroupNStegafy.View
                     this.SetPixelBgra8(sourcePixels, i, j, pixelColor, imageWidth, imageHeight);
                 }
             }
-        }
-
-        private async Task<StorageFile> selectSourceImageFile()
-        {
-            var openPicker = new FileOpenPicker {
-                ViewMode = PickerViewMode.Thumbnail,
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary
-            };
-            openPicker.FileTypeFilter.Add(".jpg");
-            openPicker.FileTypeFilter.Add(".png");
-            openPicker.FileTypeFilter.Add(".bmp");
-
-            var file = await openPicker.PickSingleFileAsync();
-
-            return file;
         }
 
         private async Task<BitmapImage> MakeACopyOfTheFileToWorkOn(StorageFile imageFile)
@@ -149,38 +143,6 @@ namespace GroupNStegafy.View
             pixels[offset + 2] = color.R;
             pixels[offset + 1] = color.G;
             pixels[offset + 0] = color.B;
-        }
-
-        private void saveButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.saveWritableBitmap();
-        }
-
-        private async void saveWritableBitmap()
-        {
-            var fileSavePicker = new FileSavePicker {
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-                SuggestedFileName = "image"
-            };
-            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string> {".png"});
-            var saveFile = await fileSavePicker.PickSaveFileAsync();
-
-            if (saveFile != null)
-            {
-                var stream = await saveFile.OpenAsync(FileAccessMode.ReadWrite);
-                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-
-                var pixelStream = this.modifiedImage.PixelBuffer.AsStream();
-                var pixels = new byte[pixelStream.Length];
-                await pixelStream.ReadAsync(pixels, 0, pixels.Length);
-
-                encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
-                    (uint) this.modifiedImage.PixelWidth,
-                    (uint) this.modifiedImage.PixelHeight, this.dpiX, this.dpiY, pixels);
-                await encoder.FlushAsync();
-
-                stream.Dispose();
-            }
         }
 
         #endregion
