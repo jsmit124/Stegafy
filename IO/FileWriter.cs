@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -11,16 +8,26 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace GroupNStegafy.IO
 {
+    /// <summary>
+    ///     Stores information for the file writer class
+    /// </summary>
     public class FileWriter
     {
+        #region Methods
+
+        /// <summary>
+        ///     Saves the writable bitmap.
+        /// </summary>
+        /// <param name="image">The image.</param>
+        /// <param name="dpiX">The dpi x.</param>
+        /// <param name="dpiY">The dpi y.</param>
         public async void SaveWritableBitmap(WriteableBitmap image, double dpiX, double dpiY)
         {
-            var fileSavePicker = new FileSavePicker
-            {
+            var fileSavePicker = new FileSavePicker {
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
                 SuggestedFileName = "image"
             };
-            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string> { ".png" });
+            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string> {".png"});
             var saveFile = await fileSavePicker.PickSaveFileAsync();
 
             if (saveFile != null)
@@ -33,12 +40,14 @@ namespace GroupNStegafy.IO
                 await pixelStream.ReadAsync(pixels, 0, pixels.Length);
 
                 encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
-                    (uint)image.PixelWidth,
-                    (uint)image.PixelHeight, dpiX, dpiY, pixels);
+                    (uint) image.PixelWidth,
+                    (uint) image.PixelHeight, dpiX, dpiY, pixels);
                 await encoder.FlushAsync();
 
                 stream.Dispose();
             }
         }
+
+        #endregion
     }
 }
