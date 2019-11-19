@@ -28,6 +28,11 @@ namespace GroupNStegafy.IO
 
             var file = await openPicker.PickSingleFileAsync();
 
+            if (file.FileType != ".bmp" && file.FileType != ".png")
+            {
+                throw new ArgumentOutOfRangeException(file.DisplayName, "File must be .bmp or .jpg file type");
+            }
+
             return file;
         }
 
