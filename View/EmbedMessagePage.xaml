@@ -26,7 +26,7 @@
                 VerticalAlignment="Top" Click="loadSourceButton_Click" Height="32" Width="109" HorizontalAlignment="Center" />
         <Button x:Name="loadMessageButton" Content="Load Message" Margin="0,210,0,0"
                 VerticalAlignment="Top" Click="loadMessageButton_Click" Height="32" Width="109" HorizontalAlignment="Center" />
-        <Button x:Name="saveButton" Content="Save" Margin="0,690,0,0"
+        <Button x:Name="saveButton" Content="Save" Margin="0,690,0,0" IsEnabled="False"
                 VerticalAlignment="Top" Click="saveButton_Click" Height="32" Width="109" HorizontalAlignment="Center" />
 
         <Image x:Name="embeddedImageDisplay" HorizontalAlignment="Left" Height="293" Margin="30,408,0,0"
@@ -48,6 +48,8 @@
 
         </ComboBox>
         <TextBlock Text="BPCC" TextWrapping="Wrap" Margin="1029,470,279,267" FontSize="20"/>
+        <Button x:Name="embedButton" Content="Embed" Margin="0,628,0,0" IsEnabled="False"
+            VerticalAlignment="Top" Height="32" Width="109" HorizontalAlignment="Center" Click="embedButton_Click" />
 
 
     </Grid>
