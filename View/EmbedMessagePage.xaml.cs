@@ -61,10 +61,11 @@ namespace GroupNStegafy.View
 
         #region Methods
 
-        private async void openButton_Click(object sender, RoutedEventArgs e)
+        private async void loadSourceButton_Click(object sender, RoutedEventArgs e)
         {
             var sourceImageFile = await this.fileReader.SelectSourceImageFile();
             var copyBitmapImage = await this.MakeACopyOfTheFileToWorkOn(sourceImageFile);
+            this.sourceImageDisplay.Source = copyBitmapImage;
 
             using (var fileStream = await sourceImageFile.OpenAsync(FileAccessMode.Read))
             {
@@ -94,7 +95,7 @@ namespace GroupNStegafy.View
                 using (var writeStream = this.modifiedImage.PixelBuffer.AsStream())
                 {
                     await writeStream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
-                    this.sourceImageDisplay.Source = this.modifiedImage;
+                    this.embeddedImageDisplay.Source = this.modifiedImage;
                 }
             }
         }
@@ -167,6 +168,11 @@ namespace GroupNStegafy.View
         private void homeButton_click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(MainPage));
+        }
+
+        private void loadMessageButton_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

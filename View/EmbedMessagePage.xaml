@@ -11,18 +11,44 @@
     Width="1600">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <CommandBar>
+        <CommandBar Height="55" Margin="0,3,0,0">
             <AppBarToggleButton Icon="Home" Label="Home" Click="homeButton_click"/>
             <CommandBar.Content>
-                <TextBlock Text="Embed Image" Margin="12,14" FontSize="22"/>
+                <TextBlock Text="Embed Image" Margin="5,5" FontSize="22"/>
             </CommandBar.Content>
         </CommandBar>
-        <Image x:Name="sourceImageDisplay" HorizontalAlignment="Left" Height="199" Margin="63,119,0,0"
-               VerticalAlignment="Top" Width="215" />
-        <Button x:Name="openbutton" Content="Open" HorizontalAlignment="Left" Margin="128,444,0,0"
-                VerticalAlignment="Top" Click="openButton_Click" />
-        <Button x:Name="saveButton" Content="Save" HorizontalAlignment="Left" Margin="213,444,0,0"
-                VerticalAlignment="Top" Click="saveButton_Click" />
+
+        <Image x:Name="sourceImageDisplay" HorizontalAlignment="Left" Height="370" Margin="30,63,0,0"
+               VerticalAlignment="Top" Width="658">
+        </Image>
+
+        <Button x:Name="loadSourceButton" Content="Load Source" Margin="0,185,0,0"
+                VerticalAlignment="Top" Click="loadSourceButton_Click" Height="40" Width="110" HorizontalAlignment="Center" />
+        <Button x:Name="loadMessageButton" Content="Load Message" Margin="0,248,0,0"
+                VerticalAlignment="Top" Click="loadMessageButton_Click" Height="40" Width="110" HorizontalAlignment="Center" />
+        <Button x:Name="saveButton" Content="Save" Margin="0,827,0,0"
+                VerticalAlignment="Top" Click="saveButton_Click" Height="40" Width="110" HorizontalAlignment="Center" />
+
+        <Image x:Name="embeddedImageDisplay" HorizontalAlignment="Left" Height="370" Margin="30,497,0,0"
+            VerticalAlignment="Top" Width="658" />
+
+        <Image x:Name="monochromeImageDisplay" HorizontalAlignment="Left" Height="370" Margin="908,63,0,0"
+            VerticalAlignment="Top" Width="658" />
+        <TextBlock Text="SETTINGS" TextWrapping="Wrap" Margin="1159,497,275,361" FontSize="36"/>
+        <CheckBox Margin="1163,682,0,0" VerticalAlignment="Top" Content="Encrypt Message" FontSize="16" />
+        <ComboBox Margin="1163,610,0,0" Width="147" SelectedIndex="0" >
+            <ComboBoxItem Content="1"/>
+            <ComboBoxItem Content="2"/>
+            <ComboBoxItem Content="3"/>
+            <ComboBoxItem Content="4"/>
+            <ComboBoxItem Content="5"/>
+            <ComboBoxItem Content="6"/>
+            <ComboBoxItem Content="7"/>
+            <ComboBoxItem Content="8"/>
+
+        </ComboBox>
+        <TextBlock Text="BPCC" TextWrapping="Wrap" Margin="1213,578,330,287" FontSize="20"/>
+
 
     </Grid>
 </Page>

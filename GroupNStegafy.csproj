@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\TestImages\botw.png" />
+    <Content Include="Assets\TestImages\monochromeTest.png" />
     <Content Include="Assets\TestImages\sunset.bmp" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
