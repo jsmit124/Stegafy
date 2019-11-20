@@ -17,7 +17,7 @@
             <CommandBar>
                 <AppBarToggleButton Icon="Home" Label="Home" Click="homeButton_click"/>
                 <CommandBar.Content>
-                    <TextBlock Text="Extract Image" Margin="10,10" FontSize="22"/>
+                    <TextBlock Text="Extract Image" Margin="5,5" FontSize="22"/>
                 </CommandBar.Content>
             </CommandBar>
         </Grid>
@@ -35,7 +35,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0"/>
-                <Button x:Name="loadEmbeddedImageButton" Content="Load Embedded Image" Grid.Row="1" Grid.Column="0"/>
+                <Button x:Name="loadEmbeddedImageButton" Content="Load Embedded Image" Grid.Row="1" Grid.Column="0" Click="loadEmbeddedImageButton_Click"/>
 
                 <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
 
@@ -44,7 +44,7 @@
 
                 <Image x:Name="decryptedMessageImageDisplay" Grid.Row="2" Grid.Column="1"/>
                 <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>
-                <Button x:Name="saveDecryptedMessageButton" Content="Save Message" Grid.Row="3" Grid.Column="1"/>
+                <Button x:Name="saveDecryptedMessageButton" Content="Save Message" Grid.Row="3" Grid.Column="1" Click="saveDecryptedMessageButton_Click"/>
             </Grid>
         </Grid>
         
