@@ -153,7 +153,8 @@ namespace GroupNStegafy.View
                     }
                     else
                     {
-                        //TODO logic for embedding bits to the LSB for each color channel in pixel
+                        //TODO prevent index out of range due to trying to pull invalid index from monochrome image
+
                         var messagePixelColor = this.GetPixelBgra8(messagePixels, currY,
                                                             currX, imageWidth, imageHeight);
 
@@ -166,7 +167,7 @@ namespace GroupNStegafy.View
                             sourcePixelColor.B |= 1; //set source pixel to 1
                         }
                     }
-
+                    
                     this.SetPixelBgra8(sourcePixels, currY, currX, sourcePixelColor, imageWidth, imageHeight);
                 }
             }
