@@ -132,6 +132,10 @@ namespace GroupNStegafy.View
             var sourcePixels = await this.extractPixelDataFromFile(this.sourceImageFile);
             var messagePixels = await this.extractPixelDataFromFile(this.monochromeImageFile);
 
+            var messageDecoder = await BitmapDecoder.CreateAsync(await this.monochromeImageFile.OpenAsync(FileAccessMode.Read));
+            var messageImageWidth = messageDecoder.PixelWidth;
+            var messageImageHeight = messageDecoder.PixelHeight;
+
             for (var currY = 0; currY < imageHeight; currY++)
             {
                 for (var currX = 0; currX < imageWidth; currX++)
@@ -153,18 +157,19 @@ namespace GroupNStegafy.View
                     }
                     else
                     {
-                        //TODO prevent index out of range due to trying to pull invalid index from monochrome image
-
-                        var messagePixelColor = this.GetPixelBgra8(messagePixels, currY,
-                                                            currX, imageWidth, imageHeight);
-
-                        if (messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0)
+                        if (currX < messageImageWidth && currY < messageImageHeight)
                         {
-                            sourcePixelColor.B &= 0xfe; //set source pixel to 0
-                        } 
-                        else if (messagePixelColor.R == 255 && messagePixelColor.B == 255 && messagePixelColor.G == 255)
-                        {
-                            sourcePixelColor.B |= 1; //set source pixel to 1
+                            var messagePixelColor = this.GetPixelBgra8(messagePixels, currY,
+                                                            currX, messageImageWidth, messageImageHeight);
+
+                            if (messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0)
+                            {
+                                sourcePixelColor.B &= 0xfe; //set source pixel to 0
+                            } 
+                            else if (messagePixelColor.R == 255 && messagePixelColor.B == 255 && messagePixelColor.G == 255)
+                            {
+                                sourcePixelColor.B |= 1; //set source pixel to 1
+                            }
                         }
                     }
                     
