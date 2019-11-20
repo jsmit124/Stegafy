@@ -6,15 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Black"
+    Height="200"
+    Width="500">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Image x:Name="imageDisplay" HorizontalAlignment="Left" Height="199" Margin="63,119,0,0"
-               VerticalAlignment="Top" Width="215" />
-        <Button x:Name="openbutton" Content="Open" HorizontalAlignment="Left" Margin="128,444,0,0"
-                VerticalAlignment="Top" Click="openButton_Click" />
-        <Button x:Name="saveButton" Content="Save" HorizontalAlignment="Left" Margin="213,444,0,0"
-                VerticalAlignment="Top" Click="saveButton_Click" />
-
+    <Grid>
+        <Button x:Name="embedButton" Content="EMBED" Height="200" Width="248" FontSize="95" FontFamily="Onyx" Background="#FF50BA18" Click="EmbedButton_Click"/>
+        <Button x:Name="extractButton" Content="EXTRACT" Margin="252,0,0,0" Height="200" Width="248" FontSize="95" FontFamily="Onyx"  RequestedTheme="Light" Background="#FF964B00" Click="ExtractButton_Click"/>
     </Grid>
 </Page>
