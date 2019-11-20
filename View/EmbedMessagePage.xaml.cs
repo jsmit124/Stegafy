@@ -77,33 +77,97 @@ namespace GroupNStegafy.View
             }
         }
 
+        private async void loadMessageButton_Click(object sender, RoutedEventArgs e)
+        {
+            var messageImageFile = await this.fileReader.SelectMessageFile();
+
+            if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
+            {
+                this.monochromeImageFile = messageImageFile;
+                var bitmapImage = await this.ConvertToBitmap(messageImageFile);
+                this.monochromeImageDisplay.Source = bitmapImage;
+            }
+            else
+            {
+                //TODO handle loading text file
+                //load text from file into text area
+            }
+
+            //TODO enable settings if source and message are loaded
+            if (this.sourceImageFile != null && this.monochromeImageFile != null)
+            {
+                this.embedButton.IsEnabled = true;
+            }
+        }
+
+        private async void embedButton_Click(object sender, RoutedEventArgs e)
+        {
+            var sourceDecoder = await BitmapDecoder.CreateAsync(await this.sourceImageFile.OpenAsync(FileAccessMode.Read));
+            var sourcePixels = await this.extractPixelDataFromFile(this.sourceImageFile);
+
+            await this.embedMessageInImage(sourceDecoder.PixelWidth, sourceDecoder.PixelHeight);
+
+            this.embeddedImage = new WriteableBitmap((int)sourceDecoder.PixelWidth, (int)sourceDecoder.PixelHeight);
+            using (var writeStream = this.embeddedImage.PixelBuffer.AsStream())
+            {
+                await writeStream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
+                this.embeddedImageDisplay.Source = this.embeddedImage;
+            }
+
+            this.saveButton.IsEnabled = true;
+        }
+
+        private void homeButton_click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(MainPage));
+        }
+
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
             this.fileWriter.SaveWritableBitmap(this.embeddedImage, this.dpiX, this.dpiY);
         }
 
-        private void embedMessageInImage(byte[] sourcePixels, uint imageWidth, uint imageHeight)
+        private async Task embedMessageInImage(uint imageWidth, uint imageHeight)
         {
-            for (var i = 0; i < imageHeight; i++)
-            {
-                for (var j = 0; j < imageWidth; j++)
-                {
-                    var pixelColor = this.GetPixelBgra8(sourcePixels, i, j, imageWidth, imageHeight);
+            var sourcePixels = await this.extractPixelDataFromFile(this.sourceImageFile);
+            var messagePixels = await this.extractPixelDataFromFile(this.monochromeImageFile);
 
-                    if (i == 0 && j == 0)
+            for (var currY = 0; currY < imageHeight; currY++)
+            {
+                for (var currX = 0; currX < imageWidth; currX++)
+                {
+                    var sourcePixelColor = this.GetPixelBgra8(sourcePixels, currY, currX, imageWidth, imageHeight);
+
+                    if (currY == 0 && currX == 0)
                     {
-                        pixelColor.R = 212;
-                        pixelColor.G = 212;
-                        pixelColor.B = 212;
+                        sourcePixelColor.R = 212;
+                        sourcePixelColor.G = 212;
+                        sourcePixelColor.B = 212;
+                    }
+                    else if (currY == 0 && currX == 1)
+                    {
+                        //TODO finish bit manipulation for other embedding settings
+                        sourcePixelColor.R &= 0xfe;
+                        sourcePixelColor.G = 1;
+                        sourcePixelColor.B &= 0xfe;
                     }
                     else
                     {
                         //TODO logic for embedding bits to the LSB for each color channel in pixel
-                        pixelColor.R = 255;
+                        var messagePixelColor = this.GetPixelBgra8(messagePixels, currY,
+                                                            currX, imageWidth, imageHeight);
+
+                        if (messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0)
+                        {
+                            sourcePixelColor.B &= 0xfe; //set source pixel to 0
+                        } 
+                        else if (messagePixelColor.R == 255 && messagePixelColor.B == 255 && messagePixelColor.G == 255)
+                        {
+                            sourcePixelColor.B |= 1; //set source pixel to 1
+                        }
                     }
 
-
-                    this.SetPixelBgra8(sourcePixels, i, j, pixelColor, imageWidth, imageHeight);
+                    this.SetPixelBgra8(sourcePixels, currY, currX, sourcePixelColor, imageWidth, imageHeight);
                 }
             }
         }
@@ -153,48 +217,23 @@ namespace GroupNStegafy.View
 
         #endregion
 
-        private void homeButton_click(object sender, RoutedEventArgs e)
+        private async Task<byte[]> extractPixelDataFromFile(StorageFile file)
         {
-            this.Frame.Navigate(typeof(MainPage));
-        }
+            var copyBitmapImage = await this.ConvertToBitmap(file);
 
-        private async void loadMessageButton_Click(object sender, RoutedEventArgs e)
-        {
-            var messageImageFile = await this.fileReader.SelectMessageFile();
-            if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
-            {
-                this.monochromeImageFile = messageImageFile;
-                var bitmapImage = await this.ConvertToBitmap(messageImageFile);
-                this.monochromeImageDisplay.Source = bitmapImage;
-            }
-            else
-            {
-                //TODO handle loading text file
-                //load text from file into text area
-            }
-
-            //TODO enable settings if source and message are loaded
-            if (this.sourceImageFile != null && this.monochromeImageFile != null)
-            {
-                this.embedButton.IsEnabled = true;
-            }
-        }
-
-        private async void embedButton_Click(object sender, RoutedEventArgs e)
-        {
-            var copyBitmapImage = await this.ConvertToBitmap(this.sourceImageFile);
-
-            using (var fileStream = await this.sourceImageFile.OpenAsync(FileAccessMode.Read))
+            using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var transform = new BitmapTransform
-                {
+                var transform = new BitmapTransform {
                     ScaledWidth = Convert.ToUInt32(copyBitmapImage.PixelWidth),
                     ScaledHeight = Convert.ToUInt32(copyBitmapImage.PixelHeight)
                 };
 
-                this.dpiX = decoder.DpiX;
-                this.dpiY = decoder.DpiY;
+                if (file.Path == this.sourceImageFile.Path)
+                {
+                    this.dpiX = decoder.DpiX;
+                    this.dpiY = decoder.DpiY;
+                }
 
                 var pixelData = await decoder.GetPixelDataAsync(
                     BitmapPixelFormat.Bgra8,
@@ -204,18 +243,7 @@ namespace GroupNStegafy.View
                     ColorManagementMode.DoNotColorManage
                 );
 
-                var sourcePixels = pixelData.DetachPixelData();
-
-                this.embedMessageInImage(sourcePixels, decoder.PixelWidth, decoder.PixelHeight);
-
-                this.embeddedImage = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
-                using (var writeStream = this.embeddedImage.PixelBuffer.AsStream())
-                {
-                    await writeStream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
-                    this.embeddedImageDisplay.Source = this.embeddedImage;
-                }
-
-                this.saveButton.IsEnabled = true;
+                return pixelData.DetachPixelData();
             }
         }
     }
