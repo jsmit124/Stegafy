@@ -6,30 +6,47 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Height="900"
+    Width="1600">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="19*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <Grid Row="0">
+            <CommandBar>
 
-        <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0"/>
-        <Button x:Name="loadEmbeddedImageButton" Content="Load Embedded Image" Grid.Row="1" Grid.Column="0"/>
+            </CommandBar>
+        </Grid>
+        <Grid Row="1">
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
+                <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0"/>
+                <Button x:Name="loadEmbeddedImageButton" Content="Load Embedded Image" Grid.Row="1" Grid.Column="0"/>
 
-        <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0"/>
-        <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0"/>
+                <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
 
-        <Image x:Name="decryptedMessageImageDisplay" Grid.Row="2" Grid.Column="1"/>
-        <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>
-        <Button x:Name="saveDecryptedMessageButton" Content="Save Message" Grid.Row="3" Grid.Column="1"/>
+                <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0"/>
+                <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0"/>
+
+                <Image x:Name="decryptedMessageImageDisplay" Grid.Row="2" Grid.Column="1"/>
+                <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>
+                <Button x:Name="saveDecryptedMessageButton" Content="Save Message" Grid.Row="3" Grid.Column="1"/>
+            </Grid>
+        </Grid>
+        
     </Grid>
+    
 </Page>
