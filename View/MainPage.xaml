@@ -11,7 +11,7 @@
     Width="500">
 
     <Grid>
-        <Button x:Name="embedButton" Content="EMBED" Height="200" Width="248" FontSize="95" FontFamily="Onyx" Background="#FF50BA18" Click="EmbedButton_Click"/>
-        <Button x:Name="extractButton" Content="EXTRACT" Margin="252,0,0,0" Height="200" Width="248" FontSize="95" FontFamily="Onyx"  RequestedTheme="Light" Background="#FF964B00" Click="ExtractButton_Click"/>
+        <Button x:Name="embedButton" Content="EMBED" Height="200" Width="248" FontSize="95" FontFamily="Onyx" Background="#FF50BA18" Click="EmbedButton_Click" Foreground="Black" Style="{ThemeResource ButtonRevealStyle}" RequestedTheme="Dark"/>
+        <Button x:Name="extractButton" Content="EXTRACT" Margin="252,0,0,0" Height="200" Width="248" FontSize="95" FontFamily="Onyx" Background="#FF964B00" Click="ExtractButton_Click" Foreground="Black" Style="{ThemeResource ButtonRevealStyle}" RequestedTheme="Dark"/>
     </Grid>
 </Page>

@@ -28,8 +28,7 @@ namespace GroupNStegafy.View
             ApplicationView.PreferredLaunchViewSize = new Size
                 { Width = applicationWidth, Height = applicationHeight };
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            ApplicationView.GetForCurrentView()
-                .SetPreferredMinSize(new Size(applicationWidth, applicationHeight));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(applicationWidth, applicationHeight));
         }
 
         #endregion
