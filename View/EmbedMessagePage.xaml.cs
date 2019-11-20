@@ -49,15 +49,6 @@ namespace GroupNStegafy.View
         {
             this.InitializeComponent();
 
-            var applicationWidth = 550;
-            var applicationHeight = 720;
-
-            ApplicationView.PreferredLaunchViewSize = new Size
-                { Width = applicationWidth, Height = applicationHeight };
-            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            ApplicationView.GetForCurrentView()
-                .SetPreferredMinSize(new Size(applicationWidth, applicationHeight));
-
             this.modifiedImage = null;
             this.dpiX = 0;
             this.dpiY = 0;
@@ -103,7 +94,7 @@ namespace GroupNStegafy.View
                 using (var writeStream = this.modifiedImage.PixelBuffer.AsStream())
                 {
                     await writeStream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
-                    this.imageDisplay.Source = this.modifiedImage;
+                    this.sourceImageDisplay.Source = this.modifiedImage;
                 }
             }
         }
@@ -172,5 +163,10 @@ namespace GroupNStegafy.View
         }
 
         #endregion
+
+        private void homeButton_click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(MainPage));
+        }
     }
 }
