@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Height="900"
-    Width="1600">
+    Height="768"
+    Width="1366">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <CommandBar Height="55" Margin="0,3,0,0">
@@ -18,25 +18,25 @@
             </CommandBar.Content>
         </CommandBar>
 
-        <Image x:Name="sourceImageDisplay" HorizontalAlignment="Left" Height="370" Margin="30,63,0,0"
-               VerticalAlignment="Top" Width="658">
+        <Image x:Name="sourceImageDisplay" HorizontalAlignment="Left" Height="294" Margin="30,63,0,0"
+               VerticalAlignment="Top" Width="558">
         </Image>
 
-        <Button x:Name="loadSourceButton" Content="Load Source" Margin="0,185,0,0"
-                VerticalAlignment="Top" Click="loadSourceButton_Click" Height="40" Width="110" HorizontalAlignment="Center" />
-        <Button x:Name="loadMessageButton" Content="Load Message" Margin="0,248,0,0"
-                VerticalAlignment="Top" Click="loadMessageButton_Click" Height="40" Width="110" HorizontalAlignment="Center" />
-        <Button x:Name="saveButton" Content="Save" Margin="0,827,0,0"
-                VerticalAlignment="Top" Click="saveButton_Click" Height="40" Width="110" HorizontalAlignment="Center" />
+        <Button x:Name="loadSourceButton" Content="Load Source" Margin="0,148,0,0"
+                VerticalAlignment="Top" Click="loadSourceButton_Click" Height="32" Width="109" HorizontalAlignment="Center" />
+        <Button x:Name="loadMessageButton" Content="Load Message" Margin="0,210,0,0"
+                VerticalAlignment="Top" Click="loadMessageButton_Click" Height="32" Width="109" HorizontalAlignment="Center" />
+        <Button x:Name="saveButton" Content="Save" Margin="0,690,0,0"
+                VerticalAlignment="Top" Click="saveButton_Click" Height="32" Width="109" HorizontalAlignment="Center" />
 
-        <Image x:Name="embeddedImageDisplay" HorizontalAlignment="Left" Height="370" Margin="30,497,0,0"
-            VerticalAlignment="Top" Width="658" />
+        <Image x:Name="embeddedImageDisplay" HorizontalAlignment="Left" Height="293" Margin="30,408,0,0"
+            VerticalAlignment="Top" Width="558" />
 
-        <Image x:Name="monochromeImageDisplay" HorizontalAlignment="Left" Height="370" Margin="908,63,0,0"
-            VerticalAlignment="Top" Width="658" />
-        <TextBlock Text="SETTINGS" TextWrapping="Wrap" Margin="1159,497,275,361" FontSize="36"/>
-        <CheckBox Margin="1163,682,0,0" VerticalAlignment="Top" Content="Encrypt Message" FontSize="16" />
-        <ComboBox Margin="1163,610,0,0" Width="147" SelectedIndex="0" >
+        <Image x:Name="monochromeImageDisplay" HorizontalAlignment="Left" Height="294" Margin="774,63,0,0"
+            VerticalAlignment="Top" Width="558" />
+        <TextBlock Text="SETTINGS" TextWrapping="Wrap" Margin="974,408,217,310" FontSize="36" Height="50"/>
+        <CheckBox Margin="990,554,0,0" VerticalAlignment="Top" IsEnabled="False" Content="Encrypt Message" FontSize="16" Height="26" Width="125" />
+        <ComboBox Margin="990,497,0,0" Width="125" SelectedIndex="0" Height="26"  IsEnabled="False">
             <ComboBoxItem Content="1"/>
             <ComboBoxItem Content="2"/>
             <ComboBoxItem Content="3"/>
@@ -47,7 +47,7 @@
             <ComboBoxItem Content="8"/>
 
         </ComboBox>
-        <TextBlock Text="BPCC" TextWrapping="Wrap" Margin="1213,578,330,287" FontSize="20"/>
+        <TextBlock Text="BPCC" TextWrapping="Wrap" Margin="1029,470,279,267" FontSize="20"/>
 
 
     </Grid>

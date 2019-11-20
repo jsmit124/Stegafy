@@ -36,6 +36,32 @@ namespace GroupNStegafy.IO
             return file;
         }
 
+        /// <summary>
+        ///     Selects the source image file.
+        /// </summary>
+        /// <returns>The source image file</returns>
+        public async Task<StorageFile> SelectMessageFile()
+        {
+            var openPicker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.Thumbnail,
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+
+            openPicker.FileTypeFilter.Add(".png");
+            openPicker.FileTypeFilter.Add(".bmp");
+            openPicker.FileTypeFilter.Add(".txt");
+
+            var file = await openPicker.PickSingleFileAsync();
+
+            if (file.FileType != ".bmp" && file.FileType != ".png" && file.FileType != ".txt")
+            {
+                throw new ArgumentOutOfRangeException(file.DisplayName, "File must be .bmp, .jpg, or .txt file type");
+            }
+
+            return file;
+        }
+
         #endregion
     }
 }

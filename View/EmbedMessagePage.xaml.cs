@@ -64,7 +64,7 @@ namespace GroupNStegafy.View
         private async void loadSourceButton_Click(object sender, RoutedEventArgs e)
         {
             var sourceImageFile = await this.fileReader.SelectSourceImageFile();
-            var copyBitmapImage = await this.MakeACopyOfTheFileToWorkOn(sourceImageFile);
+            var copyBitmapImage = await this.ConvertToBitmap(sourceImageFile);
             this.sourceImageDisplay.Source = copyBitmapImage;
 
             using (var fileStream = await sourceImageFile.OpenAsync(FileAccessMode.Read))
@@ -120,7 +120,7 @@ namespace GroupNStegafy.View
             }
         }
 
-        private async Task<BitmapImage> MakeACopyOfTheFileToWorkOn(StorageFile imageFile)
+        private async Task<BitmapImage> ConvertToBitmap(StorageFile imageFile)
         {
             IRandomAccessStream inputStream = await imageFile.OpenReadAsync();
             var newImage = new BitmapImage();
@@ -170,9 +170,19 @@ namespace GroupNStegafy.View
             this.Frame.Navigate(typeof(MainPage));
         }
 
-        private void loadMessageButton_Click(object sender, RoutedEventArgs e)
+        private async void loadMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var messageImageFile = await this.fileReader.SelectMessageFile();
+            if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
+            {
+                var bitmapImage = await this.ConvertToBitmap(messageImageFile);
+                this.monochromeImageDisplay.Source = bitmapImage;
+            }
+            else
+            {
+                //TODO handle loading text file
+                //load text from file into text area and enable settings if source and message are loaded
+            }
         }
     }
 }
