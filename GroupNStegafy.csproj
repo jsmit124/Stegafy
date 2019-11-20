@@ -121,8 +121,8 @@
     </Compile>
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
-    <Compile Include="View\EmbedMessagePage.xaml.cs">
-      <DependentUpon>EmbedMessagePage.xaml</DependentUpon>
+    <Compile Include="View\ExtractMessagePage.xaml.cs">
+      <DependentUpon>ExtractMessagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -151,7 +151,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="View\EmbedMessagePage.xaml">
+    <Page Include="View\ExtractMessagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
