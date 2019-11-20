@@ -13,6 +13,10 @@ namespace GroupNStegafy.View
     /// </summary>
     public sealed partial class MainPage
     {
+
+        private readonly double applicationHeight = (double)Application.Current.Resources["AppHeight"];
+        private readonly double applicationWidth = (double)Application.Current.Resources["AppWidth"];
+
         #region Constructors
 
         /// <summary>
@@ -21,6 +25,12 @@ namespace GroupNStegafy.View
         public MainPage()
         {
             this.InitializeComponent();
+
+            ApplicationView.PreferredLaunchViewSize = new Size
+                { Width = this.applicationWidth, Height = this.applicationHeight };
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+            ApplicationView.GetForCurrentView()
+                           .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
         }
 
         #endregion

@@ -6,32 +6,48 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Height="900"
-    Width="1600">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="19*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <Grid Row="0">
+            <CommandBar>
+                <AppBarToggleButton Icon="Home" Label="Home" Click="homeButton_click"/>
+                <CommandBar.Content>
+                    <TextBlock Text="Extract Image" Margin="5,5" FontSize="22"/>
+                </CommandBar.Content>
+            </CommandBar>
+        </Grid>
+        <Grid Row="1">
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-        <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0"/>
-        <Button x:Name="loadEmbeddedImageButton" Content="Load Embedded Image" Grid.Row="1" Grid.Column="0"/>
+                <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0"/>
+                <Button x:Name="loadEmbeddedImageButton" Content="Load Embedded Image" Grid.Row="1" Grid.Column="0" Click="loadEmbeddedImageButton_Click"/>
 
-        <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
+                <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
 
-        <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0"/>
-        <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0"/>
+                <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0"/>
+                <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0"/>
 
-        <Image x:Name="decryptedMessageImageDisplay" Grid.Row="2" Grid.Column="1"/>
-        <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>
-        <Button x:Name="saveDecryptedMessageButton" Content="Save Message" Grid.Row="3" Grid.Column="1"/>
+                <Image x:Name="decryptedMessageImageDisplay" Grid.Row="2" Grid.Column="1"/>
+                <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>
+                <Button x:Name="saveDecryptedMessageButton" Content="Save Message" Grid.Row="3" Grid.Column="1" Click="saveDecryptedMessageButton_Click"/>
+            </Grid>
+        </Grid>
+        
     </Grid>
+    
 </Page>

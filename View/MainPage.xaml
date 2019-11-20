@@ -6,9 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="Black"
-    Height="900" 
-    Width="1600">
+    Background="Black">
 
     <Grid Height="200" Width="500">
         <Button x:Name="embedButton" Content="EMBED" Height="200" Width="248" FontSize="95" FontFamily="Onyx" Background="#FF50BA18" Click="EmbedButton_Click" Foreground="Black" Style="{ThemeResource ButtonRevealStyle}" RequestedTheme="Dark"/>
