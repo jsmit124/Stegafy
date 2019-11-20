@@ -32,6 +32,9 @@ namespace GroupNStegafy.View
     {
         #region Data members
 
+        private readonly double applicationHeight = (double)Application.Current.Resources["AppHeight"];
+        private readonly double applicationWidth = (double)Application.Current.Resources["AppWidth"];
+
         private double dpiX;
         private double dpiY;
         private WriteableBitmap modifiedImage;
@@ -48,6 +51,12 @@ namespace GroupNStegafy.View
         public EmbedMessagePage()
         {
             this.InitializeComponent();
+
+            ApplicationView.PreferredLaunchViewSize = new Size
+                { Width = this.applicationWidth, Height = this.applicationHeight };
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+            ApplicationView.GetForCurrentView()
+                           .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
 
             this.modifiedImage = null;
             this.dpiX = 0;

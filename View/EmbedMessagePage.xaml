@@ -6,15 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Height="900"
-    Width="1600">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <CommandBar>
             <AppBarToggleButton Icon="Home" Label="Home" Click="homeButton_click"/>
             <CommandBar.Content>
-                <TextBlock Text="Embed Image" Margin="12,14" FontSize="22"/>
+                <TextBlock Text="Embed Image" Margin="10,10" FontSize="22"/>
             </CommandBar.Content>
         </CommandBar>
         <Image x:Name="sourceImageDisplay" HorizontalAlignment="Left" Height="199" Margin="63,119,0,0"

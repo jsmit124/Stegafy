@@ -6,9 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Height="900"
-    Width="1600">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -17,7 +15,10 @@
         </Grid.RowDefinitions>
         <Grid Row="0">
             <CommandBar>
-
+                <AppBarToggleButton Icon="Home" Label="Home" Click="homeButton_click"/>
+                <CommandBar.Content>
+                    <TextBlock Text="Extract Image" Margin="10,10" FontSize="22"/>
+                </CommandBar.Content>
             </CommandBar>
         </Grid>
         <Grid Row="1">
