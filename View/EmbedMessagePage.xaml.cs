@@ -68,8 +68,8 @@ namespace GroupNStegafy.View
         private async void loadSourceButton_Click(object sender, RoutedEventArgs e)
         {
             this.sourceImageFile = await this.fileReader.SelectSourceImageFile();
-            var image = await this.ConvertToBitmap(this.sourceImageFile);
-            this.sourceImageDisplay.Source = image;
+            var sourceImage = await this.convertToBitmap(this.sourceImageFile);
+            this.sourceImageDisplay.Source = sourceImage;
 
             if (this.sourceImageFile != null && this.monochromeImageFile != null)
             {
@@ -84,16 +84,16 @@ namespace GroupNStegafy.View
             if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
             {
                 this.monochromeImageFile = messageImageFile;
-                var bitmapImage = await this.ConvertToBitmap(messageImageFile);
+                var bitmapImage = await this.convertToBitmap(messageImageFile);
                 this.monochromeImageDisplay.Source = bitmapImage;
             }
             else
             {
-                //TODO handle loading text file
+                //TODO handle loading text file, not needed for demo
                 //load text from file into text area
             }
 
-            //TODO enable settings if source and message are loaded
+            //TODO enable settings if source and message are loaded, not needed for demo
             if (this.sourceImageFile != null && this.monochromeImageFile != null)
             {
                 this.embedButton.IsEnabled = true;
@@ -105,7 +105,7 @@ namespace GroupNStegafy.View
             var sourceDecoder = await BitmapDecoder.CreateAsync(await this.sourceImageFile.OpenAsync(FileAccessMode.Read));
             var sourcePixels = await this.extractPixelDataFromFile(this.sourceImageFile);
 
-            await this.embedMessageInImage(sourceDecoder.PixelWidth, sourceDecoder.PixelHeight);
+            await this.embedMessageInImage(sourcePixels, sourceDecoder.PixelWidth, sourceDecoder.PixelHeight);
 
             this.embeddedImage = new WriteableBitmap((int)sourceDecoder.PixelWidth, (int)sourceDecoder.PixelHeight);
             using (var writeStream = this.embeddedImage.PixelBuffer.AsStream())
@@ -127,9 +127,8 @@ namespace GroupNStegafy.View
             this.fileWriter.SaveWritableBitmap(this.embeddedImage, this.dpiX, this.dpiY);
         }
 
-        private async Task embedMessageInImage(uint imageWidth, uint imageHeight)
+        private async Task embedMessageInImage(byte[] sourcePixels, uint imageWidth, uint imageHeight)
         {
-            var sourcePixels = await this.extractPixelDataFromFile(this.sourceImageFile);
             var messagePixels = await this.extractPixelDataFromFile(this.monochromeImageFile);
 
             var messageDecoder = await BitmapDecoder.CreateAsync(await this.monochromeImageFile.OpenAsync(FileAccessMode.Read));
@@ -150,25 +149,26 @@ namespace GroupNStegafy.View
                     }
                     else if (currY == 0 && currX == 1)
                     {
-                        //TODO finish bit manipulation for other embedding settings
+                        //TODO finish bit manipulation for other embedding settings, not needed for demo
                         sourcePixelColor.R &= 0xfe;
                         sourcePixelColor.G = 1;
                         sourcePixelColor.B &= 0xfe;
                     }
+                    //DANIEL use this else statement for example code if you need it
                     else
                     {
-                        if (currX < messageImageWidth && currY < messageImageHeight)
+                        if (currX < messageImageWidth && currY < messageImageHeight) //wont need this in extraction
                         {
                             var messagePixelColor = this.GetPixelBgra8(messagePixels, currY,
                                                             currX, messageImageWidth, messageImageHeight);
 
                             if (messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0)
                             {
-                                sourcePixelColor.B &= 0xfe; //set source pixel to 0
+                                sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
                             } 
                             else if (messagePixelColor.R == 255 && messagePixelColor.B == 255 && messagePixelColor.G == 255)
                             {
-                                sourcePixelColor.B |= 1; //set source pixel to 1
+                                sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
                             }
                         }
                     }
@@ -178,7 +178,7 @@ namespace GroupNStegafy.View
             }
         }
 
-        private async Task<BitmapImage> ConvertToBitmap(StorageFile imageFile)
+        private async Task<BitmapImage> convertToBitmap(StorageFile imageFile)
         {
             IRandomAccessStream inputStream = await imageFile.OpenReadAsync();
             var newImage = new BitmapImage();
@@ -225,7 +225,7 @@ namespace GroupNStegafy.View
 
         private async Task<byte[]> extractPixelDataFromFile(StorageFile file)
         {
-            var copyBitmapImage = await this.ConvertToBitmap(file);
+            var copyBitmapImage = await this.convertToBitmap(file);
 
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {

@@ -5,6 +5,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
@@ -18,12 +19,13 @@ namespace GroupNStegafy.View
     public sealed partial class ExtractMessagePage
     {
 
-        private readonly double applicationHeight = (double)Application.Current.Resources["AppHeight"];
-        private readonly double applicationWidth = (double)Application.Current.Resources["AppWidth"];
+        private readonly double applicationHeight = (double) Application.Current.Resources["AppHeight"];
+        private readonly double applicationWidth = (double) Application.Current.Resources["AppWidth"];
 
         private double dpiX;
         private double dpiY;
-        private WriteableBitmap modifiedImage;
+        private WriteableBitmap extractedImage;
+        private StorageFile embeddedImageFile;
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
 
@@ -36,12 +38,14 @@ namespace GroupNStegafy.View
             this.InitializeComponent();
 
             ApplicationView.PreferredLaunchViewSize = new Size
-                { Width = this.applicationWidth, Height = this.applicationHeight };
+                {Width = this.applicationWidth, Height = this.applicationHeight};
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             ApplicationView.GetForCurrentView()
-                           .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
+                .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
 
-            this.modifiedImage = null;
+            this.extractedImage = null;
+            this.embeddedImageFile = null;
+
             this.dpiX = 0;
             this.dpiY = 0;
 
@@ -56,10 +60,52 @@ namespace GroupNStegafy.View
 
         private async void loadEmbeddedImageButton_Click(object sender, RoutedEventArgs e)
         {
-            var sourceImageFile = await this.fileReader.SelectSourceImageFile();
-            var copyBitmapImage = await makeACopyOfTheFileToWorkOn(sourceImageFile);
+            this.embeddedImageFile = await this.fileReader.SelectSourceImageFile();
+            var copyBitmapImage = await this.convertToBitmap(this.embeddedImageFile);
+            this.embeddedImageDisplay.Source = copyBitmapImage;
 
-            using (var fileStream = await sourceImageFile.OpenAsync(FileAccessMode.Read))
+            if (this.embeddedImageFile != null)
+            {
+                this.extractButton.IsEnabled = true;
+            }
+        }
+
+        private async void extractButton_Click(object sender, RoutedEventArgs e)
+        {
+            var embeddedDecoder = await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
+            var embeddedPixels = await this.extractPixelDataFromFile(this.embeddedImageFile);
+
+            //TODO finish the implementation of extractMessageFromImage
+            await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
+           
+            this.extractedImage = new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);
+            using (var writeStream = this.extractedImage.PixelBuffer.AsStream())
+            {
+                await writeStream.WriteAsync(embeddedPixels, 0, embeddedPixels.Length);
+                this.decryptedImageDisplay.Source = this.extractedImage;
+            }
+
+            this.saveDecryptedMessageButton.IsEnabled = true;
+        }
+
+        private void saveDecryptedMessageButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.fileWriter.SaveWritableBitmap(this.extractedImage, this.dpiX, this.dpiY);
+        }
+
+        private async Task<BitmapImage> convertToBitmap(StorageFile imageFile)
+        {
+            IRandomAccessStream inputStream = await imageFile.OpenReadAsync();
+            var newImage = new BitmapImage();
+            newImage.SetSource(inputStream);
+            return newImage;
+        }
+
+        private async Task<byte[]> extractPixelDataFromFile(StorageFile file)
+        {
+            var copyBitmapImage = await this.convertToBitmap(file);
+
+            using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
                 var transform = new BitmapTransform
@@ -79,30 +125,91 @@ namespace GroupNStegafy.View
                     ColorManagementMode.DoNotColorManage
                 );
 
-                var sourcePixels = pixelData.DetachPixelData();
+                return pixelData.DetachPixelData();
+            }
+        }
 
-
-                this.modifiedImage = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
-                using (var writeStream = this.modifiedImage.PixelBuffer.AsStream())
+        private async Task extractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth, uint embeddedImageHeight)
+        {
+            for (var currY = 0; currY < embeddedImageHeight; currY++)
+            {
+                for (var currX = 0; currX < embeddedImageWidth; currX++)
                 {
-                    await writeStream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
-                    this.embeddedImageDisplay.Source = this.modifiedImage;
+                    var embeddedPixelColor = this.GetPixelBgra8(embeddedPixels, currY, currX, embeddedImageWidth,
+                        embeddedImageHeight);
+
+                    if (currY == 0 && currX == 0)
+                    {
+                        if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 && embeddedPixelColor.G == 212))
+                        {
+                            //TODO handle no message embedded in the picture, not needed for demo
+                        }
+                    }
+                    else if (currY == 0 && currX == 1)
+                    {
+                        //TODO Configure message extraction settings and whatnot based on the values stores in the RGB bytes, not needed for demo
+                    }
+                    else
+                    {
+                        //TODO read the last bit of the blue channel
+                        var currentBlueColorByte = embeddedPixelColor.B; //this is all 8 bytes
+
+                        //TODO complete this if-else statement as stated
+
+                        //if last bit == 1, set RGB values of pixel to 255
+
+                        //this will set all values to 255
+                        //embeddedPixelColor.R = 255;
+                        //embeddedPixelColor.B = 255;
+                        //embeddedPixelColor.G = 255;
+
+                        //else last bit == 0, set RGB values of pixel to 0
+
+                        //this will set all values to 0
+                        //embeddedPixelColor.R = 0;
+                        //embeddedPixelColor.B = 0;
+                        //embeddedPixelColor.G = 0;
+                    }
+
+                    this.SetPixelBgra8(embeddedPixels, currY, currX, embeddedPixelColor, embeddedImageWidth, embeddedImageHeight);
                 }
             }
 
         }
 
-        private static async Task<BitmapImage> makeACopyOfTheFileToWorkOn(StorageFile imageFile)
+        /// <summary>
+        ///     Gets the pixel bgra8 color from the current pixel.
+        /// </summary>
+        /// <param name="pixels">The pixels.</param>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <returns>The color of the current pixel</returns>
+        public Color GetPixelBgra8(byte[] pixels, int x, int y, uint width, uint height)
         {
-            IRandomAccessStream inputStream = await imageFile.OpenReadAsync();
-            var newImage = new BitmapImage();
-            newImage.SetSource(inputStream);
-            return newImage;
+            var offset = (x * (int)width + y) * 4;
+            var r = pixels[offset + 2];
+            var g = pixels[offset + 1];
+            var b = pixels[offset + 0];
+            return Color.FromArgb(0, r, g, b);
         }
 
-        private void saveDecryptedMessageButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        ///     Sets the pixel bgra8 color to the current pixel.
+        /// </summary>
+        /// <param name="pixels">The pixels.</param>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <param name="color">The color.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        public void SetPixelBgra8(byte[] pixels, int x, int y, Color color, uint width, uint height)
         {
-
+            var offset = (x * (int)width + y) * 4;
+            pixels[offset + 2] = color.R;
+            pixels[offset + 1] = color.G;
+            pixels[offset + 0] = color.B;
         }
     }
 }

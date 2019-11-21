@@ -35,16 +35,17 @@
                 </Grid.ColumnDefinitions>
 
                 <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0"/>
-                <Button x:Name="loadEmbeddedImageButton" Content="Load Embedded Image" Grid.Row="1" Grid.Column="0" Click="loadEmbeddedImageButton_Click"/>
+                <Button Content="Load Embedded Image" Grid.Row="1" Grid.Column="0" Click="loadEmbeddedImageButton_Click"/>
 
                 <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
 
                 <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0"/>
                 <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0"/>
 
-                <Image x:Name="decryptedMessageImageDisplay" Grid.Row="2" Grid.Column="1"/>
+                <Image x:Name="decryptedImageDisplay" Grid.Row="2" Grid.Column="1"/>
                 <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>
-                <Button x:Name="saveDecryptedMessageButton" Content="Save Message" Grid.Row="3" Grid.Column="1" Click="saveDecryptedMessageButton_Click"/>
+                <Button x:Name="saveDecryptedMessageButton" IsEnabled="False" Content="Save Message" Grid.Row="3" Grid.Column="1" Click="saveDecryptedMessageButton_Click"/>
+                <Button x:Name="extractButton" IsEnabled="False" Content="Extract" Grid.Row="1" Margin="200,0,0,0" Click="extractButton_Click"/>
             </Grid>
         </Grid>
         
