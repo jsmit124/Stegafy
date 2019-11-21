@@ -101,6 +101,11 @@ namespace GroupNStegafy.View
             return newImage;
         }
 
+        private static bool isBitSet(byte b, int pos)
+        {
+            return (b & (1 << pos)) != 0;
+        }
+
         private async Task<byte[]> extractPixelDataFromFile(StorageFile file)
         {
             var copyBitmapImage = await this.convertToBitmap(file);
@@ -143,32 +148,29 @@ namespace GroupNStegafy.View
                         if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 && embeddedPixelColor.G == 212))
                         {
                             //TODO handle no message embedded in the picture, not needed for demo
+                            return;
                         }
                     }
                     else if (currY == 0 && currX == 1)
                     {
                         //TODO Configure message extraction settings and whatnot based on the values stores in the RGB bytes, not needed for demo
                     }
+                    //TODO Check for message stop symbol
                     else
                     {
-                        //TODO read the last bit of the blue channel
-                        var currentBlueColorByte = embeddedPixelColor.B; //this is all 8 bytes
-
-                        //TODO complete this if-else statement as stated
-
-                        //if last bit == 1, set RGB values of pixel to 255
-
-                        //this will set all values to 255
-                        //embeddedPixelColor.R = 255;
-                        //embeddedPixelColor.B = 255;
-                        //embeddedPixelColor.G = 255;
-
-                        //else last bit == 0, set RGB values of pixel to 0
-
-                        //this will set all values to 0
-                        //embeddedPixelColor.R = 0;
-                        //embeddedPixelColor.B = 0;
-                        //embeddedPixelColor.G = 0;
+                        var currentBlueColorByte = embeddedPixelColor.B;
+                        if (isBitSet(currentBlueColorByte, 0))
+                        {
+                            embeddedPixelColor.R = 255;
+                            embeddedPixelColor.B = 255;
+                            embeddedPixelColor.G = 255;
+                        }
+                        else
+                        {
+                            embeddedPixelColor.R = 0;
+                            embeddedPixelColor.B = 0;
+                            embeddedPixelColor.G = 0;
+                        }
                     }
 
                     this.SetPixelBgra8(embeddedPixels, currY, currX, embeddedPixelColor, embeddedImageWidth, embeddedImageHeight);
