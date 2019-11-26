@@ -12,12 +12,10 @@ using GroupNStegafy.IO;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace GroupNStegafy.View
 {
     /// <summary>
-    ///     The main page used as an entry point for the program
+    ///     The embedding page used for embedding images
     /// </summary>
     public sealed partial class EmbedMessagePage : Page
     {
@@ -39,7 +37,7 @@ namespace GroupNStegafy.View
         #region Constructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="MainPage" /> class.
+        ///     Initializes a new instance of the <see cref="EmbedMessagePage" /> class.
         /// </summary>
         public EmbedMessagePage()
         {
@@ -149,15 +147,44 @@ namespace GroupNStegafy.View
                     }
                     else if (currY == 0 && currX == 1)
                     {
-                        //TODO finish bit manipulation for other embedding settings, not needed for demo
-                        sourcePixelColor.R &= 0xfe;
-                        sourcePixelColor.G = 1;
-                        sourcePixelColor.B &= 0xfe;
+                        //handle encryption selection
+                        var isChecked = this.encryptionSelectionCheckBox.IsChecked;
+                        if (isChecked != null && (bool)isChecked)
+                        {
+                            sourcePixelColor.R |= 1; //set LSB red source pixel to 1
+                        }
+                        else
+                        {
+                            sourcePixelColor.R &= 0xfe; //set LSB red source pixel to 0
+                        }
+                        //// START
+                        ///
+                        var selected = this.BPCCSelectionComboBox.SelectedItem?.ToString();
+                        var bpcc = 1;
+                        if (selected != null)
+                        {
+                            bpcc = int.Parse(selected);
+                        }
+
+                        this.calculateBinaryForBPCC(bpcc);
+
+                        sourcePixelColor.G = (byte)bpcc;
+                        //// END
+                        
+                        //handle embedding type
+                        if (this.sourceImageFile.FileType.Equals(".txt"))
+                        {
+                            sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
+                        }
+                        else
+                        {
+                            sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
+                        }
+                        
                     }
-                    //DANIEL use this else statement for example code if you need it
                     else
                     {
-                        if (currX < messageImageWidth && currY < messageImageHeight) //wont need this in extraction
+                        if (currX < messageImageWidth && currY < messageImageHeight)
                         {
                             var messagePixelColor = this.GetPixelBgra8(messagePixels, currY,
                                                             currX, messageImageWidth, messageImageHeight);
@@ -176,6 +203,16 @@ namespace GroupNStegafy.View
                     this.SetPixelBgra8(sourcePixels, currY, currX, sourcePixelColor, imageWidth, imageHeight);
                 }
             }
+        }
+
+        private int calculateBinaryForBPCC(int bpccSelection)
+        {
+            var sum = 0.0;
+            for (var i = 0; i < bpccSelection; i++)
+            {
+                sum += Math.Pow(2, i);
+            }
+            return Convert.ToInt32(sum);
         }
 
         private async Task<BitmapImage> convertToBitmap(StorageFile imageFile)

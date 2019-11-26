@@ -35,8 +35,8 @@
         <Image x:Name="monochromeImageDisplay" HorizontalAlignment="Left" Height="294" Margin="774,63,0,0"
             VerticalAlignment="Top" Width="558" />
         <TextBlock Text="SETTINGS" TextWrapping="Wrap" Margin="974,408,217,310" FontSize="36" Height="50"/>
-        <CheckBox Margin="990,554,0,0" VerticalAlignment="Top" IsEnabled="False" Content="Encrypt Message" FontSize="16" Height="26" Width="125" />
-        <ComboBox Margin="990,497,0,0" Width="125" SelectedIndex="0" Height="26"  IsEnabled="False">
+        <CheckBox Name="encryptionSelectionCheckBox"  Margin="990,554,0,0" VerticalAlignment="Top" IsEnabled="False" Content="Encrypt Message" FontSize="16" Height="26" Width="125" />
+        <ComboBox Name ="BPCCSelectionComboBox" Margin="990,497,0,0" Width="125" SelectedIndex="0" Height="26"  IsEnabled="False">
             <ComboBoxItem Content="1"/>
             <ComboBoxItem Content="2"/>
             <ComboBoxItem Content="3"/>
