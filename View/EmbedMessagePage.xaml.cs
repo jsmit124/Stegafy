@@ -27,7 +27,7 @@ namespace GroupNStegafy.View
         private double dpiX;
         private double dpiY;
         private WriteableBitmap embeddedImage;
-        private StorageFile monochromeImageFile;
+        private StorageFile messageImageFile;
         private StorageFile sourceImageFile;
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
@@ -50,7 +50,7 @@ namespace GroupNStegafy.View
                            .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
 
             this.sourceImageFile = null;
-            this.monochromeImageFile = null;
+            this.messageImageFile = null;
             this.embeddedImage = null;
             this.dpiX = 0;
             this.dpiY = 0;
@@ -69,7 +69,7 @@ namespace GroupNStegafy.View
             var sourceImage = await this.convertToBitmap(this.sourceImageFile);
             this.sourceImageDisplay.Source = sourceImage;
 
-            if (this.sourceImageFile != null && this.monochromeImageFile != null)
+            if (this.sourceImageFile != null && this.messageImageFile != null)
             {
                 this.embedButton.IsEnabled = true;
             }
@@ -81,7 +81,7 @@ namespace GroupNStegafy.View
 
             if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
             {
-                this.monochromeImageFile = messageImageFile;
+                this.messageImageFile = messageImageFile;
                 var bitmapImage = await this.convertToBitmap(messageImageFile);
                 this.monochromeImageDisplay.Source = bitmapImage;
             }
@@ -92,9 +92,11 @@ namespace GroupNStegafy.View
             }
 
             //TODO enable settings if source and message are loaded, not needed for demo
-            if (this.sourceImageFile != null && this.monochromeImageFile != null)
+            if (this.sourceImageFile != null && this.messageImageFile != null)
             {
                 this.embedButton.IsEnabled = true;
+                this.encryptionSelectionCheckBox.IsEnabled = true;
+                this.BPCCSelectionComboBox.IsEnabled = true;
             }
         }
 
@@ -127,9 +129,9 @@ namespace GroupNStegafy.View
 
         private async Task embedMessageInImage(byte[] sourcePixels, uint imageWidth, uint imageHeight)
         {
-            var messagePixels = await this.extractPixelDataFromFile(this.monochromeImageFile);
+            var messagePixels = await this.extractPixelDataFromFile(this.messageImageFile);
 
-            var messageDecoder = await BitmapDecoder.CreateAsync(await this.monochromeImageFile.OpenAsync(FileAccessMode.Read));
+            var messageDecoder = await BitmapDecoder.CreateAsync(await this.messageImageFile.OpenAsync(FileAccessMode.Read));
             var messageImageWidth = messageDecoder.PixelWidth;
             var messageImageHeight = messageDecoder.PixelHeight;
 
@@ -157,22 +159,16 @@ namespace GroupNStegafy.View
                         {
                             sourcePixelColor.R &= 0xfe; //set LSB red source pixel to 0
                         }
-                        //// START
-                        ///
-                        var selected = this.BPCCSelectionComboBox.SelectedItem?.ToString();
-                        var bpcc = 1;
-                        if (selected != null)
+                        //handle combobox selection
+                        var selectedBPCC = (ComboBoxItem)this.BPCCSelectionComboBox.SelectedItem;
+                        if (selectedBPCC != null)
                         {
-                            bpcc = int.Parse(selected);
+                            var bpcc = int.Parse(selectedBPCC.Content.ToString()); // pull selected bpcc from UI
+                            var binaryBpcc = this.calculateBinaryForBPCC(bpcc); // convert bpcc to binary representation
+                            sourcePixelColor.G = (byte)binaryBpcc; // set the green channel to binary representation of bpcc selection
                         }
-
-                        this.calculateBinaryForBPCC(bpcc);
-
-                        sourcePixelColor.G = (byte)bpcc;
-                        //// END
-                        
                         //handle embedding type
-                        if (this.sourceImageFile.FileType.Equals(".txt"))
+                        if (this.messageImageFile.FileType.Equals(".txt"))
                         {
                             sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
                         }
