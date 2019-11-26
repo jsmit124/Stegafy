@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Controls;
 
 namespace GroupNStegafy.IO
 {
@@ -18,21 +19,29 @@ namespace GroupNStegafy.IO
         /// <returns>The source image file</returns>
         public async Task<StorageFile> SelectSourceImageFile()
         {
-            var openPicker = new FileOpenPicker {
-                ViewMode = PickerViewMode.Thumbnail,
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary
-            };
-
-            openPicker.FileTypeFilter.Add(".png");
-            openPicker.FileTypeFilter.Add(".bmp");
-
-            var file = await openPicker.PickSingleFileAsync();
-
-            if (file.FileType != ".bmp" && file.FileType != ".png")
+            StorageFile file = null;
+            try
             {
-                throw new ArgumentOutOfRangeException(file.DisplayName, "File must be .bmp or .jpg file type");
-            }
+                var openPicker = new FileOpenPicker {
+                    ViewMode = PickerViewMode.Thumbnail,
+                    SuggestedStartLocation = PickerLocationId.PicturesLibrary
+                };
 
+                openPicker.FileTypeFilter.Add(".png");
+                openPicker.FileTypeFilter.Add(".bmp");
+
+                file = await openPicker.PickSingleFileAsync();
+
+                if (file.FileType != ".bmp" && file.FileType != ".png")
+                {
+                    throw new ArgumentOutOfRangeException(file.DisplayName, "File must be .bmp or .jpg file type");
+                }
+            }
+            catch (Exception)
+            {
+                await this.showCancelledDialog("source");
+            }
+            
             return file;
         }
 
@@ -42,24 +51,43 @@ namespace GroupNStegafy.IO
         /// <returns>The source image file</returns>
         public async Task<StorageFile> SelectMessageFile()
         {
-            var openPicker = new FileOpenPicker
+            StorageFile file = null;
+            try
             {
-                ViewMode = PickerViewMode.Thumbnail,
-                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+                var openPicker = new FileOpenPicker {
+                    ViewMode = PickerViewMode.Thumbnail,
+                    SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+                };
+
+                openPicker.FileTypeFilter.Add(".png");
+                openPicker.FileTypeFilter.Add(".bmp");
+                openPicker.FileTypeFilter.Add(".txt");
+
+                file = await openPicker.PickSingleFileAsync();
+
+                if (file.FileType != ".bmp" && file.FileType != ".png" && file.FileType != ".txt")
+                {
+                    throw new ArgumentOutOfRangeException(file.DisplayName,
+                        "File must be .bmp, .jpg, or .txt file type");
+                }
+            }
+            catch (Exception)
+            {
+                await this.showCancelledDialog("message");
+            }
+            return file;
+        }
+
+        private async Task showCancelledDialog(String imageType)
+        {
+            ContentDialog loadMessageCancelledDialog = new ContentDialog()
+            {
+                Title = "CANCELLED",
+                Content = "Cancelled loading " + imageType + " image",
+                CloseButtonText = "Ok"
             };
 
-            openPicker.FileTypeFilter.Add(".png");
-            openPicker.FileTypeFilter.Add(".bmp");
-            openPicker.FileTypeFilter.Add(".txt");
-
-            var file = await openPicker.PickSingleFileAsync();
-
-            if (file.FileType != ".bmp" && file.FileType != ".png" && file.FileType != ".txt")
-            {
-                throw new ArgumentOutOfRangeException(file.DisplayName, "File must be .bmp, .jpg, or .txt file type");
-            }
-
-            return file;
+            await loadMessageCancelledDialog.ShowAsync();
         }
 
         #endregion

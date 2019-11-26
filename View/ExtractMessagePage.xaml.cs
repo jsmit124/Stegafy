@@ -61,6 +61,11 @@ namespace GroupNStegafy.View
         private async void loadEmbeddedImageButton_Click(object sender, RoutedEventArgs e)
         {
             this.embeddedImageFile = await this.fileReader.SelectSourceImageFile();
+            if (this.embeddedImageFile == null)
+            {
+                return;
+            }
+
             var copyBitmapImage = await this.convertToBitmap(this.embeddedImageFile);
             this.embeddedImageDisplay.Source = copyBitmapImage;
 
@@ -75,7 +80,6 @@ namespace GroupNStegafy.View
             var embeddedDecoder = await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
             var embeddedPixels = await this.extractPixelDataFromFile(this.embeddedImageFile);
 
-            //TODO finish the implementation of extractMessageFromImage
             await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
            
             this.extractedImage = new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);

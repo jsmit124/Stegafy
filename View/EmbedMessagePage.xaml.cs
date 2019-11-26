@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -66,18 +67,27 @@ namespace GroupNStegafy.View
         private async void loadSourceButton_Click(object sender, RoutedEventArgs e)
         {
             this.sourceImageFile = await this.fileReader.SelectSourceImageFile();
+            if (this.sourceImageFile == null)
+            {
+                return;
+            }
+
             var sourceImage = await this.convertToBitmap(this.sourceImageFile);
             this.sourceImageDisplay.Source = sourceImage;
 
             if (this.sourceImageFile != null && this.messageImageFile != null)
             {
-                this.embedButton.IsEnabled = true;
+                this.enableSettingsOptions();
             }
         }
 
         private async void loadMessageButton_Click(object sender, RoutedEventArgs e)
         {
             var messageImageFile = await this.fileReader.SelectMessageFile();
+            if (messageImageFile == null)
+            {
+                return;
+            }
 
             if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
             {
@@ -87,17 +97,23 @@ namespace GroupNStegafy.View
             }
             else
             {
-                //TODO handle loading text file, not needed for demo
+                //TODO handle loading text file
                 //load text from file into text area
             }
 
             //TODO enable settings if source and message are loaded, not needed for demo
+            
             if (this.sourceImageFile != null && this.messageImageFile != null)
             {
-                this.embedButton.IsEnabled = true;
-                this.encryptionSelectionCheckBox.IsEnabled = true;
-                this.BPCCSelectionComboBox.IsEnabled = true;
+                this.enableSettingsOptions();
             }
+        }
+
+        private void enableSettingsOptions()
+        {
+            this.embedButton.IsEnabled = true;
+            this.encryptionSelectionCheckBox.IsEnabled = true;
+            this.BPCCSelectionComboBox.IsEnabled = true;
         }
 
         private async void embedButton_Click(object sender, RoutedEventArgs e)
