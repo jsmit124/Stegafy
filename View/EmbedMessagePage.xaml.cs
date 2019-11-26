@@ -32,6 +32,7 @@ namespace GroupNStegafy.View
         private StorageFile sourceImageFile;
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
+        private bool messageImageTooLarge;
 
         #endregion
 
@@ -53,6 +54,7 @@ namespace GroupNStegafy.View
             this.sourceImageFile = null;
             this.messageImageFile = null;
             this.embeddedImage = null;
+            this.messageImageTooLarge = false;
             this.dpiX = 0;
             this.dpiY = 0;
 
@@ -123,6 +125,11 @@ namespace GroupNStegafy.View
 
             await this.embedMessageInImage(sourcePixels, sourceDecoder.PixelWidth, sourceDecoder.PixelHeight);
 
+            if (this.messageImageTooLarge)
+            {
+                return;
+            }
+
             this.embeddedImage = new WriteableBitmap((int)sourceDecoder.PixelWidth, (int)sourceDecoder.PixelHeight);
             using (var writeStream = this.embeddedImage.PixelBuffer.AsStream())
             {
@@ -150,6 +157,13 @@ namespace GroupNStegafy.View
             var messageDecoder = await BitmapDecoder.CreateAsync(await this.messageImageFile.OpenAsync(FileAccessMode.Read));
             var messageImageWidth = messageDecoder.PixelWidth;
             var messageImageHeight = messageDecoder.PixelHeight;
+
+            if (messageImageWidth > imageWidth || messageImageHeight > imageHeight)
+            {
+                await this.showMessageFileTooLargeDialog();
+                this.messageImageTooLarge = true;
+                return;
+            }
 
             for (var currY = 0; currY < imageHeight; currY++)
             {
@@ -215,6 +229,20 @@ namespace GroupNStegafy.View
                     this.SetPixelBgra8(sourcePixels, currY, currX, sourcePixelColor, imageWidth, imageHeight);
                 }
             }
+        }
+
+        private async Task showMessageFileTooLargeDialog()
+        {
+            ContentDialog messageFileTooLargeDialog = new ContentDialog()
+            {
+                Title = "ERROR",
+                Content = "Message file exceeds the dimensions of the source image" 
+                          + Environment.NewLine + "Embedding will not occur" 
+                          + Environment.NewLine + "Choose another source or message image and try again.",
+                CloseButtonText = "Ok"
+            };
+
+            await messageFileTooLargeDialog.ShowAsync();
         }
 
         private int calculateBinaryForBPCC(int bpccSelection)
