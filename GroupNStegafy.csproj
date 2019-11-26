@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
+    <Compile Include="Utility\PixelColorInfo.cs" />
     <Compile Include="View\EmbedMessagePage.xaml.cs">
       <DependentUpon>EmbedMessagePage.xaml</DependentUpon>
     </Compile>

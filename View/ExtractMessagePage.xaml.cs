@@ -5,19 +5,20 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.IO;
+using GroupNStegafy.Utility;
 
 namespace GroupNStegafy.View
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    ///     An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class ExtractMessagePage
     {
+        #region Data members
 
         private readonly double applicationHeight = (double) Application.Current.Resources["AppHeight"];
         private readonly double applicationWidth = (double) Application.Current.Resources["AppWidth"];
@@ -29,9 +30,12 @@ namespace GroupNStegafy.View
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
 
+        #endregion
+
+        #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExtractMessagePage"/> class.
+        ///     Initializes a new instance of the <see cref="ExtractMessagePage" /> class.
         /// </summary>
         public ExtractMessagePage()
         {
@@ -41,7 +45,7 @@ namespace GroupNStegafy.View
                 {Width = this.applicationWidth, Height = this.applicationHeight};
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             ApplicationView.GetForCurrentView()
-                .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
+                           .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
 
             this.extractedImage = null;
             this.embeddedImageFile = null;
@@ -53,9 +57,13 @@ namespace GroupNStegafy.View
             this.fileReader = new FileReader();
         }
 
+        #endregion
+
+        #region Methods
+
         private void homeButton_click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(MainPage));
+            Frame.Navigate(typeof(MainPage));
         }
 
         private async void loadEmbeddedImageButton_Click(object sender, RoutedEventArgs e)
@@ -77,12 +85,14 @@ namespace GroupNStegafy.View
 
         private async void extractButton_Click(object sender, RoutedEventArgs e)
         {
-            var embeddedDecoder = await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
+            var embeddedDecoder =
+                await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
             var embeddedPixels = await this.extractPixelDataFromFile(this.embeddedImageFile);
 
             await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
-           
-            this.extractedImage = new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);
+
+            this.extractedImage =
+                new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);
             using (var writeStream = this.extractedImage.PixelBuffer.AsStream())
             {
                 await writeStream.WriteAsync(embeddedPixels, 0, embeddedPixels.Length);
@@ -117,8 +127,7 @@ namespace GroupNStegafy.View
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var transform = new BitmapTransform
-                {
+                var transform = new BitmapTransform {
                     ScaledWidth = Convert.ToUInt32(copyBitmapImage.PixelWidth),
                     ScaledHeight = Convert.ToUInt32(copyBitmapImage.PixelHeight)
                 };
@@ -138,18 +147,21 @@ namespace GroupNStegafy.View
             }
         }
 
-        private async Task extractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth, uint embeddedImageHeight)
+        private async Task extractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth,
+            uint embeddedImageHeight)
         {
             for (var currY = 0; currY < embeddedImageHeight; currY++)
             {
                 for (var currX = 0; currX < embeddedImageWidth; currX++)
                 {
-                    var embeddedPixelColor = this.GetPixelBgra8(embeddedPixels, currY, currX, embeddedImageWidth,
+                    var embeddedPixelColor = PixelColorInfo.GetPixelBgra8(embeddedPixels, currY, currX,
+                        embeddedImageWidth,
                         embeddedImageHeight);
 
                     if (currY == 0 && currX == 0)
                     {
-                        if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 && embeddedPixelColor.G == 212))
+                        if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 &&
+                              embeddedPixelColor.G == 212))
                         {
                             //TODO handle no message embedded in the picture, not needed for demo
                             return;
@@ -177,45 +189,12 @@ namespace GroupNStegafy.View
                         }
                     }
 
-                    this.SetPixelBgra8(embeddedPixels, currY, currX, embeddedPixelColor, embeddedImageWidth, embeddedImageHeight);
+                    PixelColorInfo.SetPixelBgra8(embeddedPixels, currY, currX, embeddedPixelColor, embeddedImageWidth,
+                        embeddedImageHeight);
                 }
             }
-
         }
 
-        /// <summary>
-        ///     Gets the pixel bgra8 color from the current pixel.
-        /// </summary>
-        /// <param name="pixels">The pixels.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
-        /// <returns>The color of the current pixel</returns>
-        public Color GetPixelBgra8(byte[] pixels, int x, int y, uint width, uint height)
-        {
-            var offset = (x * (int)width + y) * 4;
-            var r = pixels[offset + 2];
-            var g = pixels[offset + 1];
-            var b = pixels[offset + 0];
-            return Color.FromArgb(0, r, g, b);
-        }
-
-        /// <summary>
-        ///     Sets the pixel bgra8 color to the current pixel.
-        /// </summary>
-        /// <param name="pixels">The pixels.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
-        /// <param name="color">The color.</param>
-        /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
-        public void SetPixelBgra8(byte[] pixels, int x, int y, Color color, uint width, uint height)
-        {
-            var offset = (x * (int)width + y) * 4;
-            pixels[offset + 2] = color.R;
-            pixels[offset + 1] = color.G;
-            pixels[offset + 0] = color.B;
-        }
+        #endregion
     }
 }

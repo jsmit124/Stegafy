@@ -41,7 +41,7 @@ namespace GroupNStegafy.IO
             {
                 await this.showCancelledDialog("source");
             }
-            
+
             return file;
         }
 
@@ -75,13 +75,13 @@ namespace GroupNStegafy.IO
             {
                 await this.showCancelledDialog("message");
             }
+
             return file;
         }
 
-        private async Task showCancelledDialog(String imageType)
+        private async Task showCancelledDialog(string imageType)
         {
-            ContentDialog loadMessageCancelledDialog = new ContentDialog()
-            {
+            var loadMessageCancelledDialog = new ContentDialog {
                 Title = "CANCELLED",
                 Content = "Cancelled loading " + imageType + " image",
                 CloseButtonText = "Ok"
