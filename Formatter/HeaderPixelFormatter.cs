@@ -2,7 +2,7 @@
 using Windows.UI;
 using GroupNStegafy.Converter;
 
-namespace GroupNStegafy.Utility
+namespace GroupNStegafy.Formatter
 {
     /// <summary>
     ///     Stores methods for formatting the header pixels

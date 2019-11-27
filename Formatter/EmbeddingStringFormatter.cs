@@ -1,14 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Appointments.AppointmentsProvider;
 
 namespace GroupNStegafy.Formatter
 {
+    /// <summary>
+    ///     Stores methods for formatting strings to be embedded in an image
+    /// </summary>
     public static class EmbeddingStringFormatter
     {
+        #region Methods
+
+        /// <summary>
+        ///     Formats input string for embedding.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns>The formatted string</returns>
         public static string FormatForEmbedding(string text)
         {
             text = removeWhiteSpace(text);
@@ -41,5 +47,7 @@ namespace GroupNStegafy.Formatter
             text = text.Replace(Environment.NewLine, string.Empty);
             return text;
         }
+
+        #endregion
     }
 }

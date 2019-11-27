@@ -124,7 +124,7 @@
     <Compile Include="Formatter\EmbeddingStringFormatter.cs" />
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
-    <Compile Include="Utility\HeaderPixelFormatter.cs" />
+    <Compile Include="Formatter\HeaderPixelFormatter.cs" />
     <Compile Include="Utility\PixelColorInfo.cs" />
     <Compile Include="View\Dialogs.cs" />
     <Compile Include="View\EmbedMessagePage.xaml.cs">
