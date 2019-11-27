@@ -7,6 +7,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.IO;
 using GroupNStegafy.Utility;
@@ -25,6 +26,7 @@ namespace GroupNStegafy.View
 
         private double dpiX;
         private double dpiY;
+
         private WriteableBitmap extractedImage;
         private StorageFile embeddedImageFile;
         private readonly FileWriter fileWriter;
@@ -115,11 +117,6 @@ namespace GroupNStegafy.View
             return newImage;
         }
 
-        private static bool isBitSet(byte b, int pos)
-        {
-            return (b & (1 << pos)) != 0;
-        }
-
         private async Task<byte[]> extractPixelDataFromFile(StorageFile file)
         {
             var copyBitmapImage = await this.convertToBitmap(file);
@@ -158,18 +155,19 @@ namespace GroupNStegafy.View
                         embeddedImageWidth,
                         embeddedImageHeight);
 
-                    if (currY == 0 && currX == 0)
+                    if (isFirstPixel(currY, currX))
                     {
                         if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 &&
                               embeddedPixelColor.G == 212))
                         {
-                            //TODO handle no message embedded in the picture, not needed for demo
+                            await showNoMessageDialog();
                             return;
                         }
                     }
-                    else if (currY == 0 && currX == 1)
+                    else if (isSecondPixel(currY, currX))
                     {
                         //TODO Configure message extraction settings and whatnot based on the values stores in the RGB bytes, not needed for demo
+
                     }
                     //TODO Check for message stop symbol
                     else
@@ -193,6 +191,32 @@ namespace GroupNStegafy.View
                         embeddedImageHeight);
                 }
             }
+        }
+
+        private static async Task showNoMessageDialog()
+        {
+            var noMessageDialog = new ContentDialog {
+                Title = "No Message Found",
+                Content = "There was no embedded message found in this image",
+                CloseButtonText = "Ok"
+            };
+
+            await noMessageDialog.ShowAsync();
+        }
+
+        private static bool isSecondPixel(int currY, int currX)
+        {
+            return currY == 0 && currX == 1;
+        }
+
+        private static bool isFirstPixel(int currY, int currX)
+        {
+            return currY == 0 && currX == 0;
+        }
+
+        private static bool isBitSet(byte b, int pos)
+        {
+            return (b & (1 << pos)) != 0;
         }
 
         #endregion
