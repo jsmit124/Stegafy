@@ -161,7 +161,7 @@ namespace GroupNStegafy.View
                         if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 &&
                               embeddedPixelColor.G == 212))
                         {
-                            await showNoMessageDialog();
+                            await Dialogs.ShowNoMessageDialog();
                             return;
                         }
                     }
@@ -192,17 +192,6 @@ namespace GroupNStegafy.View
                         embeddedImageHeight);
                 }
             }
-        }
-
-        private static async Task showNoMessageDialog()
-        {
-            var noMessageDialog = new ContentDialog {
-                Title = "No Message Found",
-                Content = "There was no embedded message found in this image",
-                CloseButtonText = "Ok"
-            };
-
-            await noMessageDialog.ShowAsync();
         }
 
         private static bool isSecondPixel(int currY, int currX)

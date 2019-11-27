@@ -102,6 +102,8 @@ namespace GroupNStegafy.View
             else
             {
                 //TODO handle showing text file information
+                var textFromFile = await this.fileReader.ReadTextFromFile(this.messageFile);
+                this.textFileDisplay.Text = textFromFile;
                 this.textFileDisplay.Visibility = Visibility.Visible;
             }
 
@@ -193,11 +195,11 @@ namespace GroupNStegafy.View
                     var sourcePixelColor =
                         PixelColorInfo.GetPixelBgra8(sourcePixels, currY, currX, sourceImageWidth, sourceImageHeight);
 
-                    if (currX == 0 && currY == 0)
+                    if (isFirstPixel(currX, currY))
                     {
                         sourcePixelColor = HeaderPixelFormatter.FormatFirstHeaderPixel(sourcePixelColor);
                     }
-                    else if (currY == 0 && currX == 1)
+                    else if (isSecondPixel(currX, currY))
                     {
                         var encryptionIsChecked = this.encryptionSelectionCheckBox.IsChecked.Value;
                         var bpccSelection = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
@@ -230,12 +232,11 @@ namespace GroupNStegafy.View
                 var messagePixelColor = PixelColorInfo.GetPixelBgra8(messagePixels, currY,
                     currX, messageImageWidth, messageImageHeight);
 
-                if (messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0)
+                if (isBlackPixel(messagePixelColor))
                 {
                     sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
                 }
-                else if (messagePixelColor.R == 255 && messagePixelColor.B == 255 &&
-                         messagePixelColor.G == 255)
+                else if (isWhitePixel(messagePixelColor))
                 {
                     sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
                 }
@@ -272,6 +273,27 @@ namespace GroupNStegafy.View
 
                 return pixelData.DetachPixelData();
             }
+        }
+
+        private static bool isFirstPixel(int currX, int currY)
+        {
+            return currY == 0 && currX == 0;
+        }
+
+        private static bool isSecondPixel(int currX, int currY)
+        {
+            return currY == 0 && currX == 1;
+        }
+
+        private static bool isWhitePixel(Color messagePixelColor)
+        {
+            return messagePixelColor.R == 255 && messagePixelColor.B == 255 &&
+                   messagePixelColor.G == 255;
+        }
+
+        private static bool isBlackPixel(Color messagePixelColor)
+        {
+            return messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0;
         }
 
         #endregion

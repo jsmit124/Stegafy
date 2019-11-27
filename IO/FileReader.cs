@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -77,6 +78,19 @@ namespace GroupNStegafy.IO
             }
 
             return file;
+        }
+
+        public async Task<String> ReadTextFromFile(StorageFile textFile)
+        {
+            var inputStream = await textFile.OpenSequentialReadAsync();
+
+            string fileContents;
+            using (var streamReader = new StreamReader(inputStream.AsStreamForRead()))
+            {
+                fileContents = await streamReader.ReadToEndAsync();
+            }
+
+            return fileContents;
         }
 
         #endregion

@@ -146,6 +146,7 @@
     <Content Include="Assets\TestImages\botw.png" />
     <Content Include="Assets\TestImages\monochromeTest.bmp" />
     <Content Include="Assets\TestImages\sunset.bmp" />
+    <Content Include="Assets\TestImages\testTextFile.txt" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -176,6 +177,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.9</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
+      <Version>6.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

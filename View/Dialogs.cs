@@ -42,6 +42,20 @@ namespace GroupNStegafy.View
             await loadMessageCancelledDialog.ShowAsync();
         }
 
+        /// <summary>
+        ///     Shows the no message dialog.
+        /// </summary>
+        public static async Task ShowNoMessageDialog()
+        {
+            var noMessageDialog = new ContentDialog {
+                Title = "No Message Found",
+                Content = "There was no embedded message found in this image",
+                CloseButtonText = "Ok"
+            };
+
+            await noMessageDialog.ShowAsync();
+        }
+
         #endregion
     }
 }
