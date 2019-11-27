@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Converter;
+using GroupNStegafy.Formatter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Utility;
 
@@ -34,6 +35,8 @@ namespace GroupNStegafy.View
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
         private bool messageImageTooLarge;
+
+        private const string EndOfTextFileIndication = "#.-.-. -#";
 
         #endregion
 
@@ -101,7 +104,6 @@ namespace GroupNStegafy.View
             }
             else
             {
-                //TODO handle showing text file information
                 var textFromFile = await this.fileReader.ReadTextFromFile(this.messageFile);
                 this.textFileDisplay.Text = textFromFile;
                 this.textFileDisplay.Visibility = Visibility.Visible;

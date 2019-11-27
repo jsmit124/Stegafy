@@ -80,7 +80,12 @@ namespace GroupNStegafy.IO
             return file;
         }
 
-        public async Task<String> ReadTextFromFile(StorageFile textFile)
+        /// <summary>
+        ///     Reads the text from file.
+        /// </summary>
+        /// <param name="textFile">The text file.</param>
+        /// <returns>The text stored in the storage file</returns>
+        public async Task<string> ReadTextFromFile(StorageFile textFile)
         {
             var inputStream = await textFile.OpenSequentialReadAsync();
 

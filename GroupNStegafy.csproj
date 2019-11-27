@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Converter\BinaryDecimalConverter.cs" />
     <Compile Include="Converter\FileBitmapConverter.cs" />
+    <Compile Include="Formatter\EmbeddingStringFormatter.cs" />
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
     <Compile Include="Utility\HeaderPixelFormatter.cs" />
