@@ -119,9 +119,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\BinaryDecimalConverter.cs" />
+    <Compile Include="Converter\FileBitmapConverter.cs" />
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
+    <Compile Include="Utility\HeaderPixelFormatter.cs" />
     <Compile Include="Utility\PixelColorInfo.cs" />
+    <Compile Include="View\Dialogs.cs" />
     <Compile Include="View\EmbedMessagePage.xaml.cs">
       <DependentUpon>EmbedMessagePage.xaml</DependentUpon>
     </Compile>

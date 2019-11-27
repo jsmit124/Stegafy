@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
+using GroupNStegafy.View;
 
 namespace GroupNStegafy.IO
 {
@@ -39,7 +40,7 @@ namespace GroupNStegafy.IO
             }
             catch (Exception)
             {
-                await this.showCancelledDialog("source");
+                await Dialogs.ShowFileSelectionCancelledDialog("source");
             }
 
             return file;
@@ -73,21 +74,10 @@ namespace GroupNStegafy.IO
             }
             catch (Exception)
             {
-                await this.showCancelledDialog("message");
+                await Dialogs.ShowFileSelectionCancelledDialog("message");
             }
 
             return file;
-        }
-
-        private async Task showCancelledDialog(string imageType)
-        {
-            var loadMessageCancelledDialog = new ContentDialog {
-                Title = "CANCELLED",
-                Content = "Cancelled loading " + imageType + " image",
-                CloseButtonText = "Ok"
-            };
-
-            await loadMessageCancelledDialog.ShowAsync();
         }
 
         #endregion

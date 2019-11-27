@@ -10,6 +10,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using GroupNStegafy.Converter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Utility;
 
@@ -28,7 +29,7 @@ namespace GroupNStegafy.View
         private double dpiX;
         private double dpiY;
         private WriteableBitmap embeddedImage;
-        private StorageFile messageImageFile;
+        private StorageFile messageFile;
         private StorageFile sourceImageFile;
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
@@ -52,7 +53,7 @@ namespace GroupNStegafy.View
                            .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
 
             this.sourceImageFile = null;
-            this.messageImageFile = null;
+            this.messageFile = null;
             this.embeddedImage = null;
             this.messageImageTooLarge = false;
             this.dpiX = 0;
@@ -76,10 +77,10 @@ namespace GroupNStegafy.View
                 return;
             }
 
-            var sourceImage = await this.convertToBitmap(this.sourceImageFile);
+            var sourceImage = await FileBitmapConverter.ConvertFileToBitmap(this.sourceImageFile);
             this.sourceImageDisplay.Source = sourceImage;
 
-            if (this.sourceImageFile != null && this.messageImageFile != null)
+            if (this.sourceImageFile != null && this.messageFile != null)
             {
                 this.enableSettingsOptions();
             }
@@ -93,14 +94,19 @@ namespace GroupNStegafy.View
                 return;
             }
 
+            this.messageFile = messageImageFile;
+
             if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
             {
-                this.messageImageFile = messageImageFile;
-                var bitmapImage = await this.convertToBitmap(messageImageFile);
+                var bitmapImage = await FileBitmapConverter.ConvertFileToBitmap(messageImageFile);
                 this.monochromeImageDisplay.Source = bitmapImage;
             }
+            else
+            {
+                //TODO handle message is .txt file
+            }
 
-            if (this.sourceImageFile != null && this.messageImageFile != null)
+            if (this.sourceImageFile != null && this.messageFile != null)
             {
                 this.enableSettingsOptions();
             }
@@ -152,16 +158,16 @@ namespace GroupNStegafy.View
 
         private async Task embedMessageInImage(byte[] sourcePixels, uint sourceImageWidth, uint sourceImageHeight)
         {
-            var messagePixels = await this.extractPixelDataFromFile(this.messageImageFile);
+            var messagePixels = await this.extractPixelDataFromFile(this.messageFile);
 
             var messageDecoder =
-                await BitmapDecoder.CreateAsync(await this.messageImageFile.OpenAsync(FileAccessMode.Read));
+                await BitmapDecoder.CreateAsync(await this.messageFile.OpenAsync(FileAccessMode.Read));
             var messageImageWidth = messageDecoder.PixelWidth;
             var messageImageHeight = messageDecoder.PixelHeight;
 
             if (messageImageWidth > sourceImageWidth || messageImageHeight > sourceImageHeight)
             {
-                await this.showMessageFileTooLargeDialog();
+                await Dialogs.ShowMessageFileTooLargeDialog();
                 this.messageImageTooLarge = true;
                 return;
             }
@@ -175,133 +181,56 @@ namespace GroupNStegafy.View
 
                     if (currX == 0 && currY == 0)
                     {
-                        sourcePixelColor = this.handleFirstHeaderPixel(sourcePixelColor);
+                        sourcePixelColor = HeaderPixelFormatter.FormatFirstHeaderPixel(sourcePixelColor);
                     }
                     else if (currY == 0 && currX == 1)
                     {
-                        sourcePixelColor = this.handleSecondHeaderPixel(sourcePixelColor);
+                        var encryptionIsChecked = this.encryptionSelectionCheckBox.IsChecked.Value;
+
+                        var bpccSelection = (ComboBoxItem)this.BPCCSelectionComboBox.SelectedItem;
+                        var bpcc = int.Parse(bpccSelection.Content.ToString());
+
+                        sourcePixelColor = HeaderPixelFormatter.FormatSecondHeaderPixel(this.messageFile, sourcePixelColor, encryptionIsChecked, bpcc);
+                    }
+                    else if (this.messageFile.FileType == ".txt")
+                    {
+                        //TODO complete text embedding
                     }
                     else
                     {
-                        if (currX < messageImageWidth && currY < messageImageHeight)
-                        {
-                            var messagePixelColor = PixelColorInfo.GetPixelBgra8(messagePixels, currY,
-                                currX, messageImageWidth, messageImageHeight);
-
-                            if (messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0)
-                            {
-                                sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
-                            }
-                            else if (messagePixelColor.R == 255 && messagePixelColor.B == 255 &&
-                                     messagePixelColor.G == 255)
-                            {
-                                sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
-                            }
-                        }
+                        sourcePixelColor = this.embedMonochromeImage(currX, messageImageWidth, currY, messageImageHeight, messagePixels, sourcePixelColor);
                     }
+
                     PixelColorInfo.SetPixelBgra8(sourcePixels, currY, currX, sourcePixelColor, sourceImageWidth, sourceImageHeight);
                 }
             }
         }
 
-        private Color handleFirstHeaderPixel(Color sourcePixelColor)
+        private Color embedMonochromeImage(int currX, uint messageImageWidth, int currY, uint messageImageHeight,
+            byte[] messagePixels, Color sourcePixelColor)
         {
-            sourcePixelColor.R = 212;
-            sourcePixelColor.G = 212;
-            sourcePixelColor.B = 212;
-            return sourcePixelColor;
-        }
-
-        private Color handleSecondHeaderPixel(Color sourcePixelColor)
-        {
-            var isChecked = this.encryptionSelectionCheckBox.IsChecked;
-            sourcePixelColor = handleEncryptionSelectionHeader(isChecked, sourcePixelColor);
-
-            var selectedBPCC = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
-            sourcePixelColor = this.handleBpccSelectionHeader(selectedBPCC, sourcePixelColor);
-
-            sourcePixelColor = this.handleEmbeddingTypeHeader(sourcePixelColor, this.messageImageFile);
-
-            return sourcePixelColor;
-        }
-
-        private Color handleEmbeddingTypeHeader(Color sourcePixelColor, StorageFile file)
-        {
-            if (file.FileType.Equals(".txt"))
+            if (currX < messageImageWidth && currY < messageImageHeight)
             {
-                sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
-            }
-            else
-            {
-                sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
+                var messagePixelColor = PixelColorInfo.GetPixelBgra8(messagePixels, currY,
+                    currX, messageImageWidth, messageImageHeight);
+
+                if (messagePixelColor.R == 0 && messagePixelColor.B == 0 && messagePixelColor.G == 0)
+                {
+                    sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
+                }
+                else if (messagePixelColor.R == 255 && messagePixelColor.B == 255 &&
+                         messagePixelColor.G == 255)
+                {
+                    sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
+                }
             }
 
             return sourcePixelColor;
-        }
-
-        private Color handleBpccSelectionHeader(ComboBoxItem selectedBPCC, Color sourcePixelColor)
-        {
-            if (selectedBPCC != null)
-            {
-                var bpcc = int.Parse(selectedBPCC.Content.ToString()); // pull selected bpcc from UI
-                var binaryBpcc = this.calculateBinaryForBPCC(bpcc); // convert bpcc to binary representation
-                sourcePixelColor.G =
-                    (byte) binaryBpcc; // set the green channel to binary representation of bpcc selection
-            }
-
-            return sourcePixelColor;
-        }
-
-        private Color handleEncryptionSelectionHeader(bool? isChecked, Color sourcePixelColor)
-        {
-            if (isChecked != null && (bool) isChecked)
-            {
-                sourcePixelColor.R |= 1; //set LSB red source pixel to 1
-            }
-            else
-            {
-                sourcePixelColor.R &= 0xfe; //set LSB red source pixel to 0
-            }
-
-            return sourcePixelColor;
-        }
-
-        private async Task showMessageFileTooLargeDialog()
-        {
-            var messageFileTooLargeDialog = new ContentDialog
-            {
-                Title = "ERROR",
-                Content = "Message file exceeds the dimensions of the source image"
-                          + Environment.NewLine + "Embedding will not occur"
-                          + Environment.NewLine + "Choose another source or message image and try again.",
-                CloseButtonText = "Ok"
-            };
-
-            await messageFileTooLargeDialog.ShowAsync();
-        }
-
-        private int calculateBinaryForBPCC(int bpccSelection)
-        {
-            var sum = 0.0;
-            for (var i = 0; i < bpccSelection; i++)
-            {
-                sum += Math.Pow(2, i);
-            }
-
-            return Convert.ToInt32(sum);
-        }
-
-        private async Task<BitmapImage> convertToBitmap(StorageFile imageFile)
-        {
-            IRandomAccessStream inputStream = await imageFile.OpenReadAsync();
-            var newImage = new BitmapImage();
-            newImage.SetSource(inputStream);
-            return newImage;
         }
 
         private async Task<byte[]> extractPixelDataFromFile(StorageFile file)
         {
-            var copyBitmapImage = await this.convertToBitmap(file);
+            var copyBitmapImage = await FileBitmapConverter.ConvertFileToBitmap(file);
 
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
