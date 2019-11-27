@@ -5,9 +5,9 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.IO;
 using GroupNStegafy.Utility;
@@ -91,7 +91,7 @@ namespace GroupNStegafy.View
                 await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
             var embeddedPixels = await this.extractPixelDataFromFile(this.embeddedImageFile);
 
-            this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
+            await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
 
             this.extractedImage =
                 new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);
@@ -144,7 +144,7 @@ namespace GroupNStegafy.View
             }
         }
 
-        private void extractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth,
+        private async Task extractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth,
             uint embeddedImageHeight)
         {
             for (var currY = 0; currY < embeddedImageHeight; currY++)
@@ -160,13 +160,14 @@ namespace GroupNStegafy.View
                         if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 &&
                               embeddedPixelColor.G == 212))
                         {
-                            //TODO handle no message embedded in the picture, not needed for demo
+                            await showNoMessageDialog();
                             return;
                         }
                     }
                     else if (isSecondPixel(currY, currX))
                     {
                         //TODO Configure message extraction settings and whatnot based on the values stores in the RGB bytes, not needed for demo
+
                     }
                     //TODO Check for message stop symbol
                     else
@@ -174,11 +175,15 @@ namespace GroupNStegafy.View
                         var currentBlueColorByte = embeddedPixelColor.B;
                         if (isBitSet(currentBlueColorByte, 0))
                         {
-                            setPixelToWhite(embeddedPixelColor);
+                            embeddedPixelColor.R = 255;
+                            embeddedPixelColor.B = 255;
+                            embeddedPixelColor.G = 255;
                         }
                         else
                         {
-                            setPixelToBlack(embeddedPixelColor);
+                            embeddedPixelColor.R = 0;
+                            embeddedPixelColor.B = 0;
+                            embeddedPixelColor.G = 0;
                         }
                     }
 
@@ -186,6 +191,17 @@ namespace GroupNStegafy.View
                         embeddedImageHeight);
                 }
             }
+        }
+
+        private static async Task showNoMessageDialog()
+        {
+            var noMessageDialog = new ContentDialog {
+                Title = "No Message Found",
+                Content = "There was no embedded message found in this image",
+                CloseButtonText = "Ok"
+            };
+
+            await noMessageDialog.ShowAsync();
         }
 
         private static bool isSecondPixel(int currY, int currX)
@@ -201,20 +217,6 @@ namespace GroupNStegafy.View
         private static bool isBitSet(byte b, int pos)
         {
             return (b & (1 << pos)) != 0;
-        }
-
-        private static void setPixelToBlack(Color embeddedPixelColor)
-        {
-            embeddedPixelColor.R = 0;
-            embeddedPixelColor.B = 0;
-            embeddedPixelColor.G = 0;
-        }
-
-        private static void setPixelToWhite(Color embeddedPixelColor)
-        {
-            embeddedPixelColor.R = 255;
-            embeddedPixelColor.B = 255;
-            embeddedPixelColor.G = 255;
         }
 
         #endregion
