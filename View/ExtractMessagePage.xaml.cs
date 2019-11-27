@@ -8,6 +8,7 @@ using Windows.Storage.Streams;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.IO;
 using GroupNStegafy.Utility;
@@ -65,7 +66,7 @@ namespace GroupNStegafy.View
 
         private void homeButton_click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MainPage));
+            Frame.Navigate(typeof(MainPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft });
         }
 
         private async void loadEmbeddedImageButton_Click(object sender, RoutedEventArgs e)

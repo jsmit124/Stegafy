@@ -8,6 +8,7 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Converter;
 using GroupNStegafy.IO;
@@ -78,10 +79,7 @@ namespace GroupNStegafy.View
             var sourceImage = await FileBitmapConverter.ConvertFileToBitmap(this.sourceImageFile);
             this.sourceImageDisplay.Source = sourceImage;
 
-            if (this.sourceImageFile != null && this.messageFile != null)
-            {
-                this.enableSettingsOptions();
-            }
+            this.checkIfBothDisplaysLoadedToEnableSettings();
         }
 
         private async void loadMessageButton_Click(object sender, RoutedEventArgs e)
@@ -92,22 +90,28 @@ namespace GroupNStegafy.View
                 return;
             }
 
+            this.hideMessageDisplays();
             this.messageFile = messageImageFile;
 
             if (messageImageFile.FileType == ".bmp" || messageImageFile.FileType == ".png")
             {
                 var bitmapImage = await FileBitmapConverter.ConvertFileToBitmap(messageImageFile);
                 this.monochromeImageDisplay.Source = bitmapImage;
+                this.monochromeImageDisplay.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                //TODO handle showing text file information
+                this.textFileDisplay.Visibility = Visibility.Visible;
             }
 
-            if (this.sourceImageFile != null && this.messageFile != null)
-            {
-                this.enableSettingsOptions();
-            }
+            this.checkIfBothDisplaysLoadedToEnableSettings();
         }
 
         private async void embedButton_Click(object sender, RoutedEventArgs e)
         {
+            this.embeddingProgressRing.IsActive = true;
+
             var sourceDecoder =
                 await BitmapDecoder.CreateAsync(await this.sourceImageFile.OpenAsync(FileAccessMode.Read));
             var sourcePixels = await this.extractPixelDataFromFile(this.sourceImageFile);
@@ -116,6 +120,7 @@ namespace GroupNStegafy.View
 
             if (this.messageImageTooLarge)
             {
+                this.embeddingProgressRing.IsActive = false;
                 return;
             }
 
@@ -127,11 +132,12 @@ namespace GroupNStegafy.View
             }
 
             this.saveButton.IsEnabled = true;
+            this.embeddingProgressRing.IsActive = false;
         }
 
         private void homeButton_click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MainPage));
+            Frame.Navigate(typeof(MainPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
@@ -139,11 +145,25 @@ namespace GroupNStegafy.View
             this.fileWriter.SaveWritableBitmap(this.embeddedImage, this.dpiX, this.dpiY);
         }
 
+        private void checkIfBothDisplaysLoadedToEnableSettings()
+        {
+            if (this.sourceImageFile != null && this.messageFile != null)
+            {
+                this.enableSettingsOptions();
+            }
+        }
+
         private void enableSettingsOptions()
         {
             this.embedButton.IsEnabled = true;
             this.encryptionSelectionCheckBox.IsEnabled = true;
             this.BPCCSelectionComboBox.IsEnabled = true;
+        }
+
+        private void hideMessageDisplays()
+        {
+            this.monochromeImageDisplay.Visibility = Visibility.Collapsed;
+            this.textFileDisplay.Visibility = Visibility.Collapsed;
         }
 
         #endregion
@@ -180,7 +200,6 @@ namespace GroupNStegafy.View
                     else if (currY == 0 && currX == 1)
                     {
                         var encryptionIsChecked = this.encryptionSelectionCheckBox.IsChecked.Value;
-
                         var bpccSelection = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
                         var bpcc = int.Parse(bpccSelection.Content.ToString());
 

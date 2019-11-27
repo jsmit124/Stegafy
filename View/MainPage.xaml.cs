@@ -5,6 +5,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace GroupNStegafy.View
 {
@@ -37,12 +38,12 @@ namespace GroupNStegafy.View
 
         private void EmbedButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(EmbedMessagePage));
+            this.Frame.Navigate(typeof(EmbedMessagePage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft });
         }
 
         private void ExtractButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(ExtractMessagePage));
+            this.Frame.Navigate(typeof(ExtractMessagePage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
     }
 
