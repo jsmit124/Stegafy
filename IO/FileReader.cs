@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
 using GroupNStegafy.View;
 
 namespace GroupNStegafy.IO

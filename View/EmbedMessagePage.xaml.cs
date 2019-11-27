@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -56,7 +55,7 @@ namespace GroupNStegafy.View
             this.messageFile = null;
             this.embeddedImage = null;
             this.messageImageTooLarge = false;
-            
+
             this.dpiX = 0;
             this.dpiY = 0;
 
@@ -65,8 +64,6 @@ namespace GroupNStegafy.View
         }
 
         #endregion
-
-        #region Methods
 
         #region keep these methods in code behind
 
@@ -102,10 +99,6 @@ namespace GroupNStegafy.View
                 var bitmapImage = await FileBitmapConverter.ConvertFileToBitmap(messageImageFile);
                 this.monochromeImageDisplay.Source = bitmapImage;
             }
-            else
-            {
-                //TODO handle message is .txt file
-            }
 
             if (this.sourceImageFile != null && this.messageFile != null)
             {
@@ -126,7 +119,7 @@ namespace GroupNStegafy.View
                 return;
             }
 
-            this.embeddedImage = new WriteableBitmap((int)sourceDecoder.PixelWidth, (int)sourceDecoder.PixelHeight);
+            this.embeddedImage = new WriteableBitmap((int) sourceDecoder.PixelWidth, (int) sourceDecoder.PixelHeight);
             using (var writeStream = this.embeddedImage.PixelBuffer.AsStream())
             {
                 await writeStream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
@@ -188,10 +181,11 @@ namespace GroupNStegafy.View
                     {
                         var encryptionIsChecked = this.encryptionSelectionCheckBox.IsChecked.Value;
 
-                        var bpccSelection = (ComboBoxItem)this.BPCCSelectionComboBox.SelectedItem;
+                        var bpccSelection = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
                         var bpcc = int.Parse(bpccSelection.Content.ToString());
 
-                        sourcePixelColor = HeaderPixelFormatter.FormatSecondHeaderPixel(this.messageFile, sourcePixelColor, encryptionIsChecked, bpcc);
+                        sourcePixelColor = HeaderPixelFormatter.FormatSecondHeaderPixel(this.messageFile,
+                            sourcePixelColor, encryptionIsChecked, bpcc);
                     }
                     else if (this.messageFile.FileType == ".txt")
                     {
@@ -199,10 +193,12 @@ namespace GroupNStegafy.View
                     }
                     else
                     {
-                        sourcePixelColor = this.embedMonochromeImage(currX, messageImageWidth, currY, messageImageHeight, messagePixels, sourcePixelColor);
+                        sourcePixelColor = this.embedMonochromeImage(currX, messageImageWidth, currY,
+                            messageImageHeight, messagePixels, sourcePixelColor);
                     }
 
-                    PixelColorInfo.SetPixelBgra8(sourcePixels, currY, currX, sourcePixelColor, sourceImageWidth, sourceImageHeight);
+                    PixelColorInfo.SetPixelBgra8(sourcePixels, currY, currX, sourcePixelColor, sourceImageWidth,
+                        sourceImageHeight);
                 }
             }
         }
@@ -236,8 +232,7 @@ namespace GroupNStegafy.View
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var transform = new BitmapTransform
-                {
+                var transform = new BitmapTransform {
                     ScaledWidth = Convert.ToUInt32(copyBitmapImage.PixelWidth),
                     ScaledHeight = Convert.ToUInt32(copyBitmapImage.PixelHeight)
                 };
@@ -259,8 +254,6 @@ namespace GroupNStegafy.View
                 return pixelData.DetachPixelData();
             }
         }
-
-        #endregion
 
         #endregion
     }
