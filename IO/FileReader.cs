@@ -1,8 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
+using GroupNStegafy.View;
 
 namespace GroupNStegafy.IO
 {
@@ -39,7 +40,7 @@ namespace GroupNStegafy.IO
             }
             catch (Exception)
             {
-                await this.showCancelledDialog("source");
+                await Dialogs.ShowFileSelectionCancelledDialog("source");
             }
 
             return file;
@@ -73,21 +74,28 @@ namespace GroupNStegafy.IO
             }
             catch (Exception)
             {
-                await this.showCancelledDialog("message");
+                await Dialogs.ShowFileSelectionCancelledDialog("message");
             }
 
             return file;
         }
 
-        private async Task showCancelledDialog(string imageType)
+        /// <summary>
+        ///     Reads the text from file.
+        /// </summary>
+        /// <param name="textFile">The text file.</param>
+        /// <returns>The text stored in the storage file</returns>
+        public async Task<string> ReadTextFromFile(StorageFile textFile)
         {
-            var loadMessageCancelledDialog = new ContentDialog {
-                Title = "CANCELLED",
-                Content = "Cancelled loading " + imageType + " image",
-                CloseButtonText = "Ok"
-            };
+            var inputStream = await textFile.OpenSequentialReadAsync();
 
-            await loadMessageCancelledDialog.ShowAsync();
+            string fileContents;
+            using (var streamReader = new StreamReader(inputStream.AsStreamForRead()))
+            {
+                fileContents = await streamReader.ReadToEndAsync();
+            }
+
+            return fileContents;
         }
 
         #endregion

@@ -2,7 +2,9 @@
 
 namespace GroupNStegafy.Utility
 {
-    /// <summary>Stores methods for getting and setting pixel color data</summary>
+    /// <summary>
+    ///     Stores methods for getting and setting pixel color data
+    /// </summary>
     public static class PixelColorInfo
     {
         #region Methods

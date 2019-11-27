@@ -1,0 +1,8 @@
+﻿This is a test file for embedding text into image. Let's hope this works.
+DiFfErEnT cAsEs FoR tEsT
+
+the above line should be stripped
+more  than  one  space  should  still  work
+  leading and trailing spaces should work  
+	tabs	should	be	stripped	too	
+Must exclude punctuation characters like !?.,()/-

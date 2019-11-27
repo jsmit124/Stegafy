@@ -9,6 +9,7 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.IO;
 using GroupNStegafy.Utility;
@@ -69,7 +70,7 @@ namespace GroupNStegafy.View
 
         private void homeButton_click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MainPage));
+            Frame.Navigate(typeof(MainPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft });
         }
 
         private async void loadEmbeddedImageButton_Click(object sender, RoutedEventArgs e)
@@ -164,7 +165,7 @@ namespace GroupNStegafy.View
                         if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 &&
                               embeddedPixelColor.G == 212))
                         {
-                            await showNoMessageDialog();
+                            await Dialogs.ShowNoMessageDialog();
                             return;
                         }
                     }
@@ -190,17 +191,6 @@ namespace GroupNStegafy.View
                         embeddedImageHeight);
                 }
             }
-        }
-
-        private static async Task showNoMessageDialog()
-        {
-            var noMessageDialog = new ContentDialog {
-                Title = "No Message Found",
-                Content = "There was no embedded message found in this image",
-                CloseButtonText = "Ok"
-            };
-
-            await noMessageDialog.ShowAsync();
         }
 
         private static bool isSecondPixel(int currY, int currX)
