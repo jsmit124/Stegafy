@@ -55,6 +55,7 @@ namespace GroupNStegafy.View
             this.messageImageFile = null;
             this.embeddedImage = null;
             this.messageImageTooLarge = false;
+            
             this.dpiX = 0;
             this.dpiY = 0;
 

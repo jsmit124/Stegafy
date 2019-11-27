@@ -5,6 +5,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
@@ -25,6 +26,7 @@ namespace GroupNStegafy.View
 
         private double dpiX;
         private double dpiY;
+
         private WriteableBitmap extractedImage;
         private StorageFile embeddedImageFile;
         private readonly FileWriter fileWriter;
@@ -89,7 +91,7 @@ namespace GroupNStegafy.View
                 await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
             var embeddedPixels = await this.extractPixelDataFromFile(this.embeddedImageFile);
 
-            await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
+            this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
 
             this.extractedImage =
                 new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);
@@ -113,11 +115,6 @@ namespace GroupNStegafy.View
             var newImage = new BitmapImage();
             newImage.SetSource(inputStream);
             return newImage;
-        }
-
-        private static bool isBitSet(byte b, int pos)
-        {
-            return (b & (1 << pos)) != 0;
         }
 
         private async Task<byte[]> extractPixelDataFromFile(StorageFile file)
@@ -147,7 +144,7 @@ namespace GroupNStegafy.View
             }
         }
 
-        private async Task extractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth,
+        private void extractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth,
             uint embeddedImageHeight)
         {
             for (var currY = 0; currY < embeddedImageHeight; currY++)
@@ -158,7 +155,7 @@ namespace GroupNStegafy.View
                         embeddedImageWidth,
                         embeddedImageHeight);
 
-                    if (currY == 0 && currX == 0)
+                    if (isFirstPixel(currY, currX))
                     {
                         if (!(embeddedPixelColor.R == 212 && embeddedPixelColor.B == 212 &&
                               embeddedPixelColor.G == 212))
@@ -167,7 +164,7 @@ namespace GroupNStegafy.View
                             return;
                         }
                     }
-                    else if (currY == 0 && currX == 1)
+                    else if (isSecondPixel(currY, currX))
                     {
                         //TODO Configure message extraction settings and whatnot based on the values stores in the RGB bytes, not needed for demo
                     }
@@ -177,15 +174,11 @@ namespace GroupNStegafy.View
                         var currentBlueColorByte = embeddedPixelColor.B;
                         if (isBitSet(currentBlueColorByte, 0))
                         {
-                            embeddedPixelColor.R = 255;
-                            embeddedPixelColor.B = 255;
-                            embeddedPixelColor.G = 255;
+                            setPixelToWhite(embeddedPixelColor);
                         }
                         else
                         {
-                            embeddedPixelColor.R = 0;
-                            embeddedPixelColor.B = 0;
-                            embeddedPixelColor.G = 0;
+                            setPixelToBlack(embeddedPixelColor);
                         }
                     }
 
@@ -193,6 +186,35 @@ namespace GroupNStegafy.View
                         embeddedImageHeight);
                 }
             }
+        }
+
+        private static bool isSecondPixel(int currY, int currX)
+        {
+            return currY == 0 && currX == 1;
+        }
+
+        private static bool isFirstPixel(int currY, int currX)
+        {
+            return currY == 0 && currX == 0;
+        }
+
+        private static bool isBitSet(byte b, int pos)
+        {
+            return (b & (1 << pos)) != 0;
+        }
+
+        private static void setPixelToBlack(Color embeddedPixelColor)
+        {
+            embeddedPixelColor.R = 0;
+            embeddedPixelColor.B = 0;
+            embeddedPixelColor.G = 0;
+        }
+
+        private static void setPixelToWhite(Color embeddedPixelColor)
+        {
+            embeddedPixelColor.R = 255;
+            embeddedPixelColor.B = 255;
+            embeddedPixelColor.G = 255;
         }
 
         #endregion
