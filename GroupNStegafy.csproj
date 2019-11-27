@@ -119,7 +119,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Constants\Constants.cs" />
     <Compile Include="Converter\BinaryDecimalConverter.cs" />
+    <Compile Include="Converter\BinaryStringConverter.cs" />
     <Compile Include="Converter\FileBitmapConverter.cs" />
     <Compile Include="Formatter\EmbeddingStringFormatter.cs" />
     <Compile Include="IO\FileReader.cs" />

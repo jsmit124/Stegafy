@@ -36,8 +36,6 @@ namespace GroupNStegafy.View
         private readonly FileReader fileReader;
         private bool messageImageTooLarge;
 
-        private const string EndOfTextFileIndication = "#.-.-. -#";
-
         #endregion
 
         #region Constructors
@@ -106,6 +104,7 @@ namespace GroupNStegafy.View
             {
                 var textFromFile = await this.fileReader.ReadTextFromFile(this.messageFile);
                 this.textFileDisplay.Text = textFromFile;
+
                 this.textFileDisplay.Visibility = Visibility.Visible;
             }
 
