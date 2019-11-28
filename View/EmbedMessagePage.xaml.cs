@@ -102,10 +102,13 @@ namespace GroupNStegafy.View
             }
             else
             {
+                this.embeddingProgressRing.IsActive = true;
                 var textFromFile = await this.fileReader.ReadTextFromFile(this.messageFile);
                 this.textFileDisplay.Text = textFromFile;
 
                 this.textFileDisplay.Visibility = Visibility.Visible;
+                this.textFileScroller.Visibility = Visibility.Visible;
+                this.embeddingProgressRing.IsActive = false;
             }
 
             this.checkIfBothDisplaysLoadedToEnableSettings();
@@ -167,6 +170,7 @@ namespace GroupNStegafy.View
         {
             this.monochromeImageDisplay.Visibility = Visibility.Collapsed;
             this.textFileDisplay.Visibility = Visibility.Collapsed;
+            this.textFileScroller.Visibility = Visibility.Collapsed;
         }
 
         #endregion

@@ -37,8 +37,11 @@
 
         <Image x:Name="monochromeImageDisplay" HorizontalAlignment="Left" Height="294" Margin="774,63,0,0"
                VerticalAlignment="Top" Width="558" />
-        <TextBlock x:Name="textFileDisplay" HorizontalAlignment="Left" Height="294" Margin="774,63,0,0"
-                   VerticalAlignment="Top" Width="558" />
+        <ScrollViewer x:Name="textFileScroller" Visibility="Collapsed" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  HorizontalAlignment="Left" Height="294" Margin="774,63,0,0" VerticalAlignment="Top" Width="558">
+            <StackPanel>
+                <TextBlock x:Name="textFileDisplay" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            </StackPanel>
+        </ScrollViewer>
         <TextBlock Text="SETTINGS" TextWrapping="Wrap" Margin="975,396,216,322" FontSize="36" Height="50" />
         <CheckBox Name="encryptionSelectionCheckBox" Margin="991,539,0,0" VerticalAlignment="Top" IsEnabled="False"
                   Content="Encrypt Message" FontSize="16" Height="26" Width="125" />
@@ -57,8 +60,5 @@
                  extensions:TextBoxRegex.Regex="^[A-Z]*$" CharacterCasing="Upper" TextAlignment="Center" />
         <Button x:Name="embedButton" Content="Embed" Margin="0,628,0,0" IsEnabled="False" Style="{StaticResource ButtonRevealStyle}"
                 VerticalAlignment="Top" Height="32" Width="109" HorizontalAlignment="Center" Click="embedButton_Click" />
-
-
-
     </Grid>
 </Page>
