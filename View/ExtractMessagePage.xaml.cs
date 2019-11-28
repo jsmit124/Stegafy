@@ -5,6 +5,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -32,6 +33,9 @@ namespace GroupNStegafy.View
         private StorageFile embeddedImageFile;
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
+
+        private readonly Color whitePixel = Color.FromArgb(255, 255, 255, 255);
+        private readonly Color blackPixel = Color.FromArgb(255, 0, 0, 0);
 
         #endregion
 
@@ -168,7 +172,6 @@ namespace GroupNStegafy.View
                     else if (isSecondPixel(currY, currX))
                     {
                         //TODO Configure message extraction settings and whatnot based on the values stores in the RGB bytes, not needed for demo
-
                     }
                     //TODO Check for message stop symbol
                     else
@@ -176,15 +179,11 @@ namespace GroupNStegafy.View
                         var currentBlueColorByte = embeddedPixelColor.B;
                         if (isBitSet(currentBlueColorByte, 0))
                         {
-                            embeddedPixelColor.R = 255;
-                            embeddedPixelColor.B = 255;
-                            embeddedPixelColor.G = 255;
+                            embeddedPixelColor = this.whitePixel;
                         }
                         else
                         {
-                            embeddedPixelColor.R = 0;
-                            embeddedPixelColor.B = 0;
-                            embeddedPixelColor.G = 0;
+                            embeddedPixelColor = this.blackPixel;
                         }
                     }
 
