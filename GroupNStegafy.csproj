@@ -120,13 +120,19 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constants.cs" />
+    <Compile Include="Controller\StegafyManager.cs" />
     <Compile Include="Converter\BinaryDecimalConverter.cs" />
     <Compile Include="Converter\BinaryStringConverter.cs" />
     <Compile Include="Converter\FileBitmapConverter.cs" />
+    <Compile Include="Enumerables\FileTypes.cs" />
     <Compile Include="Formatter\EmbeddingStringFormatter.cs" />
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
     <Compile Include="Formatter\HeaderPixelFormatter.cs" />
+    <Compile Include="Model\Embedder.cs" />
+    <Compile Include="Model\MonochromeImageEmbedder.cs" />
+    <Compile Include="Model\TextMessageEmbedder.cs" />
+    <Compile Include="Utility\PixelExtracter.cs" />
     <Compile Include="Utility\PixelColorInfo.cs" />
     <Compile Include="View\Dialogs.cs" />
     <Compile Include="View\EmbedMessagePage.xaml.cs">
@@ -186,9 +192,7 @@
       <Version>6.0.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -1,6 +1,6 @@
-﻿using Windows.Storage;
-using Windows.UI;
+﻿using Windows.UI;
 using GroupNStegafy.Converter;
+using GroupNStegafy.Enumerables;
 
 namespace GroupNStegafy.Formatter
 {
@@ -34,24 +34,24 @@ namespace GroupNStegafy.Formatter
         /// <summary>
         ///     Formats the second header pixel.
         /// </summary>
-        /// <param name="messageFile">The message file.</param>
+        /// <param name="fileType">The file type.</param>
         /// <param name="sourcePixelColor">Color of the source pixel.</param>
         /// <param name="isChecked">if set to <c>true</c> [is checked].</param>
         /// <param name="bpcc">The BPCC.</param>
         /// <returns>The pixel color of the second header pixel</returns>
-        public static Color FormatSecondHeaderPixel(StorageFile messageFile, Color sourcePixelColor, bool isChecked,
+        public static Color FormatSecondHeaderPixel(FileTypes fileType, Color sourcePixelColor, bool isChecked,
             int bpcc)
         {
             sourcePixelColor = handleEncryptionSelectionHeader(isChecked, sourcePixelColor);
             sourcePixelColor = handleBpccSelectionHeader(bpcc, sourcePixelColor);
-            sourcePixelColor = handleEmbeddingTypeHeader(sourcePixelColor, messageFile);
+            sourcePixelColor = handleEmbeddingTypeHeader(sourcePixelColor, fileType);
 
             return sourcePixelColor;
         }
 
-        private static Color handleEmbeddingTypeHeader(Color sourcePixelColor, StorageFile file)
+        private static Color handleEmbeddingTypeHeader(Color sourcePixelColor, FileTypes fileType)
         {
-            if (file.FileType.Equals(".txt"))
+            if (fileType == FileTypes.Text)
             {
                 sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
             }
