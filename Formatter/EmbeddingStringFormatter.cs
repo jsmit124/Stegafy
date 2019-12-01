@@ -8,6 +8,13 @@ namespace GroupNStegafy.Formatter
     /// </summary>
     public static class EmbeddingStringFormatter
     {
+        #region Data members
+
+        private const string SpaceCharacter = " ";
+        private const string TabCharacter = "\t";
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -32,13 +39,13 @@ namespace GroupNStegafy.Formatter
 
         private static string removeWhiteSpace(string text)
         {
-            text = text.Replace(" ", string.Empty);
+            text = text.Replace(SpaceCharacter, string.Empty);
             return text;
         }
 
         private static string removeTabCharacters(string text)
         {
-            text = text.Replace("\t", string.Empty);
+            text = text.Replace(TabCharacter, string.Empty);
             return text;
         }
 

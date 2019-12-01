@@ -3,6 +3,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
+using GroupNStegafy.Constants;
 using GroupNStegafy.Controller;
 
 namespace GroupNStegafy.View
@@ -48,7 +49,6 @@ namespace GroupNStegafy.View
             this.progressRing.IsActive = true;
 
             await this.stegafyManager.LoadSourceImage();
-
             this.sourceImageDisplay.Source = this.stegafyManager.SourceImage;
 
             this.checkIfSourceLoadedToEnableSettings();
@@ -62,17 +62,15 @@ namespace GroupNStegafy.View
 
             await this.stegafyManager.LoadMessage();
 
-            if (this.stegafyManager.MessageFileType == ".txt")
+            if (this.stegafyManager.MessageFileType == FileTypeConstants.TextFileType)
             {
                 this.textFileDisplay.Text = this.stegafyManager.TextFromFile;
-
                 this.textFileDisplay.Visibility = Visibility.Visible;
                 this.textFileScroller.Visibility = Visibility.Visible;
             }
             else
             {
                 this.monochromeImageDisplay.Source = this.stegafyManager.MessageImage;
-
                 this.monochromeImageDisplay.Visibility = Visibility.Visible;
             }
 

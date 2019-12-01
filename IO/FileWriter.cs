@@ -5,6 +5,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Media.Imaging;
+using GroupNStegafy.Constants;
 
 namespace GroupNStegafy.IO
 {
@@ -27,7 +28,7 @@ namespace GroupNStegafy.IO
                 SuggestedStartLocation = PickerLocationId.PicturesLibrary,
                 SuggestedFileName = "image"
             };
-            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string> {".png"});
+            fileSavePicker.FileTypeChoices.Add("PNG files", new List<string> {FileTypeConstants.PortableNetworkImage});
             var saveFile = await fileSavePicker.PickSaveFileAsync();
 
             if (saveFile != null)

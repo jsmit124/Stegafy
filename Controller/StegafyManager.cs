@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
+using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Model;
@@ -106,7 +107,7 @@ namespace GroupNStegafy.Controller
                 return;
             }
 
-            if (this.MessageFileType == ".txt")
+            if (this.MessageFileType.Equals(FileTypeConstants.TextFileType))
             {
                 this.messageEmbedder = new TextMessageEmbedder();
                 this.TextFromFile = await this.fileReader.ReadTextFromFile(this.messageFile);
@@ -145,7 +146,7 @@ namespace GroupNStegafy.Controller
         /// <param name="bpcc">The BPCC.</param>
         public async Task EmbedMessage(bool encryptionSelected, int bpcc)
         {
-            if (this.messageFile.FileType == ".txt")
+            if (this.messageFile.FileType == FileTypeConstants.TextFileType)
             {
                 //TODO handle text files
             }

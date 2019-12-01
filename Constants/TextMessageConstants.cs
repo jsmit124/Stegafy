@@ -3,7 +3,7 @@
     /// <summary>
     ///     Stores information for the constants used throughout the program
     /// </summary>
-    internal class Constants
+    internal class TextMessageConstants
     {
         #region Data members
 

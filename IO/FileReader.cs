@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using GroupNStegafy.Constants;
 using GroupNStegafy.View;
 
 namespace GroupNStegafy.IO
@@ -28,12 +29,12 @@ namespace GroupNStegafy.IO
                     SuggestedStartLocation = PickerLocationId.PicturesLibrary
                 };
 
-                openPicker.FileTypeFilter.Add(".png");
-                openPicker.FileTypeFilter.Add(".bmp");
+                openPicker.FileTypeFilter.Add(FileTypeConstants.PortableNetworkImage);
+                openPicker.FileTypeFilter.Add(FileTypeConstants.BitmapFileType);
 
                 file = await openPicker.PickSingleFileAsync();
 
-                if (file.FileType != ".bmp" && file.FileType != ".png")
+                if (file.FileType != FileTypeConstants.BitmapFileType && file.FileType != FileTypeConstants.PortableNetworkImage)
                 {
                     throw new ArgumentOutOfRangeException(file.DisplayName, "File must be .bmp or .jpg file type");
                 }
@@ -60,13 +61,14 @@ namespace GroupNStegafy.IO
                     SuggestedStartLocation = PickerLocationId.DocumentsLibrary
                 };
 
-                openPicker.FileTypeFilter.Add(".png");
-                openPicker.FileTypeFilter.Add(".bmp");
-                openPicker.FileTypeFilter.Add(".txt");
+                openPicker.FileTypeFilter.Add(FileTypeConstants.PortableNetworkImage);
+                openPicker.FileTypeFilter.Add(FileTypeConstants.BitmapFileType);
+                openPicker.FileTypeFilter.Add(FileTypeConstants.TextFileType);
 
                 file = await openPicker.PickSingleFileAsync();
 
-                if (file.FileType != ".bmp" && file.FileType != ".png" && file.FileType != ".txt")
+                if (file.FileType != FileTypeConstants.BitmapFileType && file.FileType != FileTypeConstants.PortableNetworkImage 
+                                                                      && file.FileType != FileTypeConstants.BitmapFileType)
                 {
                     throw new ArgumentOutOfRangeException(file.DisplayName,
                         "File must be .bmp, .jpg, or .txt file type");
