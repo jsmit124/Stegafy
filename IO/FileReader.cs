@@ -34,12 +34,13 @@ namespace GroupNStegafy.IO
 
                 file = await openPicker.PickSingleFileAsync();
 
-                if (file.FileType != FileTypeConstants.BitmapFileType && file.FileType != FileTypeConstants.PortableNetworkImage)
+                if (file.FileType != FileTypeConstants.BitmapFileType &&
+                    file.FileType != FileTypeConstants.PortableNetworkImage)
                 {
                     throw new ArgumentOutOfRangeException(file.DisplayName, "File must be .bmp or .jpg file type");
                 }
             }
-            catch (Exception)
+            catch (NullReferenceException)
             {
                 await Dialogs.ShowFileSelectionCancelledDialog("source");
             }
@@ -67,14 +68,16 @@ namespace GroupNStegafy.IO
 
                 file = await openPicker.PickSingleFileAsync();
 
-                if (file.FileType != FileTypeConstants.BitmapFileType && file.FileType != FileTypeConstants.PortableNetworkImage 
-                                                                      && file.FileType != FileTypeConstants.BitmapFileType)
+                if (file.FileType != FileTypeConstants.BitmapFileType && file.FileType !=
+                                                                      FileTypeConstants.PortableNetworkImage
+                                                                      && file.FileType !=
+                                                                      FileTypeConstants.TextFileType)
                 {
                     throw new ArgumentOutOfRangeException(file.DisplayName,
                         "File must be .bmp, .jpg, or .txt file type");
                 }
             }
-            catch (Exception)
+            catch (NullReferenceException)
             {
                 await Dialogs.ShowFileSelectionCancelledDialog("message");
             }

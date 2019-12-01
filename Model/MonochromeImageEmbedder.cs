@@ -40,8 +40,7 @@ namespace GroupNStegafy.Model
                 for (var currX = 0; currX < sourceImageWidth; currX++)
                 {
                     var sourcePixelColor =
-                        PixelColorInfo.GetPixelBgra8(SourceImagePixels, currY, currX, sourceImageWidth,
-                            sourceImageHeight);
+                        PixelColorInfo.GetPixelBgra8(SourceImagePixels, currY, currX, sourceImageWidth);
 
                     if (IsFirstPixel(currX, currY))
                     {
@@ -58,8 +57,7 @@ namespace GroupNStegafy.Model
                             messageImageHeight, messagePixels, sourcePixelColor);
                     }
 
-                    PixelColorInfo.SetPixelBgra8(SourceImagePixels, currY, currX, sourcePixelColor, sourceImageWidth,
-                        sourceImageHeight);
+                    PixelColorInfo.SetPixelBgra8(SourceImagePixels, currY, currX, sourcePixelColor, sourceImageWidth);
                 }
             }
 
@@ -72,7 +70,7 @@ namespace GroupNStegafy.Model
             if (currX < messageImageWidth && currY < messageImageHeight)
             {
                 var messagePixelColor = PixelColorInfo.GetPixelBgra8(messagePixels, currY,
-                    currX, messageImageWidth, messageImageHeight);
+                    currX, messageImageWidth);
 
                 if (isBlackPixel(messagePixelColor))
                 {

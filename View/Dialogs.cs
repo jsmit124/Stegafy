@@ -56,6 +56,37 @@ namespace GroupNStegafy.View
             await noMessageDialog.ShowAsync();
         }
 
+        /// <summary>
+        ///     Shows the not possible to embed text into source image dialog.
+        /// </summary>
+        public static async Task ShowNotPossibleToEmbedTextDialog()
+        {
+            var noMessageDialog = new ContentDialog {
+                Title = "ERROR",
+                Content = "Text cannot be embedded into this image." + Environment.NewLine +
+                          "Choose another source image and try again.",
+                CloseButtonText = "Ok"
+            };
+
+            await noMessageDialog.ShowAsync();
+        }
+
+        /// <summary>
+        ///     Shows the required bpcc to embed text into source image dialog.
+        /// </summary>
+        public static async Task ShowRequiredBpccToEmbedTextDialog(int requiredBpcc)
+        {
+            var noMessageDialog = new ContentDialog {
+                Title = "ERROR",
+                Content = "Text cannot be embedded into this image with currently selected BPCC count."
+                          + Environment.NewLine + "To embed this message, it will require a BPCC selection of " +
+                          requiredBpcc + " or higher.",
+                CloseButtonText = "Ok"
+            };
+
+            await noMessageDialog.ShowAsync();
+        }
+
         #endregion
     }
 }

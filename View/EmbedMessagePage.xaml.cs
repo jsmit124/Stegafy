@@ -49,6 +49,12 @@ namespace GroupNStegafy.View
             this.progressRing.IsActive = true;
 
             await this.stegafyManager.LoadSourceImage();
+            if (!this.stegafyManager.SourceImageLoaded())
+            {
+                this.progressRing.IsActive = false;
+                return;
+            }
+
             this.sourceImageDisplay.Source = this.stegafyManager.SourceImage;
 
             this.checkIfSourceLoadedToEnableSettings();
@@ -61,6 +67,12 @@ namespace GroupNStegafy.View
             this.hideMessageDisplays();
 
             await this.stegafyManager.LoadMessage();
+
+            if (!this.stegafyManager.MessageLoaded())
+            {
+                this.progressRing.IsActive = false;
+                return;
+            }
 
             if (this.stegafyManager.MessageFileType == FileTypeConstants.TextFileType)
             {

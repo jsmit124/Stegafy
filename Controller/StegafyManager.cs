@@ -5,6 +5,7 @@ using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
+using GroupNStegafy.Formatter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Model;
 using GroupNStegafy.Utility;
@@ -148,7 +149,12 @@ namespace GroupNStegafy.Controller
         {
             if (this.messageFile.FileType == FileTypeConstants.TextFileType)
             {
-                //TODO handle text files
+                var formattedText = this.formatTextForEmbedding(this.TextFromFile);
+                var binaryText = BinaryStringConverter.ConvertStringToBinary(formattedText);
+                var messageLength = binaryText.Length;
+
+                await this.messageEmbedder.EmbedMessageInImage(binaryText, (uint) messageLength, 0,
+                    this.sourceImageWidth, this.sourceImageHeight, encryptionSelected, bpcc);
             }
             else
             {
@@ -191,6 +197,11 @@ namespace GroupNStegafy.Controller
                 this.sourceImageHeight = decoder.PixelHeight;
                 this.sourceImageWidth = decoder.PixelWidth;
             }
+        }
+
+        private string formatTextForEmbedding(string text)
+        {
+            return EmbeddingStringFormatter.FormatForEmbedding(text) + TextMessageConstants.EndOfTextFileIndication;
         }
 
         #endregion

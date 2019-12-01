@@ -16,9 +16,8 @@ namespace GroupNStegafy.Utility
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
         /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
         /// <returns>The color of the current pixel</returns>
-        public static Color GetPixelBgra8(byte[] pixels, int x, int y, uint width, uint height)
+        public static Color GetPixelBgra8(byte[] pixels, int x, int y, uint width)
         {
             var offset = (x * (int) width + y) * 4;
             var r = pixels[offset + 2];
@@ -35,8 +34,7 @@ namespace GroupNStegafy.Utility
         /// <param name="y">The y.</param>
         /// <param name="color">The color.</param>
         /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
-        public static void SetPixelBgra8(byte[] pixels, int x, int y, Color color, uint width, uint height)
+        public static void SetPixelBgra8(byte[] pixels, int x, int y, Color color, uint width)
         {
             var offset = (x * (int) width + y) * 4;
             pixels[offset + 2] = color.R;

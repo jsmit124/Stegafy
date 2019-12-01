@@ -153,6 +153,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\TestImages\24x24ImageForTestingBPCCDialog.png" />
     <Content Include="Assets\TestImages\botw.png" />
     <Content Include="Assets\TestImages\LargeTextFile.txt" />
     <Content Include="Assets\TestImages\monochromeTest.bmp" />

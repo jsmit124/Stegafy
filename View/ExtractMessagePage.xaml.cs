@@ -157,8 +157,7 @@ namespace GroupNStegafy.View
                 for (var currX = 0; currX < embeddedImageWidth; currX++)
                 {
                     var embeddedPixelColor = PixelColorInfo.GetPixelBgra8(embeddedPixels, currY, currX,
-                        embeddedImageWidth,
-                        embeddedImageHeight);
+                        embeddedImageWidth);
 
                     if (isFirstPixel(currY, currX))
                     {
@@ -187,8 +186,7 @@ namespace GroupNStegafy.View
                         }
                     }
 
-                    PixelColorInfo.SetPixelBgra8(embeddedPixels, currY, currX, embeddedPixelColor, embeddedImageWidth,
-                        embeddedImageHeight);
+                    PixelColorInfo.SetPixelBgra8(embeddedPixels, currY, currX, embeddedPixelColor, embeddedImageWidth);
                 }
             }
         }
