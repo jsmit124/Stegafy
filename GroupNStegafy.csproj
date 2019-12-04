@@ -133,6 +133,7 @@
     <Compile Include="Model\Embedder.cs" />
     <Compile Include="Model\MonochromeImageEmbedder.cs" />
     <Compile Include="Model\TextMessageEmbedder.cs" />
+    <Compile Include="Model\VCipher.cs" />
     <Compile Include="Utility\PixelExtracter.cs" />
     <Compile Include="Utility\PixelColorInfo.cs" />
     <Compile Include="View\Dialogs.cs" />
