@@ -72,8 +72,8 @@ namespace GroupNStegafy.Model
                     }
                     else
                     {
-                        sourcePixelColor = this.embedTextMessage(messageBits, sourcePixelColor, currentIndex);
-                        currentIndex += 3;
+                        sourcePixelColor = this.embedTextMessage(messageBits, sourcePixelColor, currentIndex, bpcc);
+                        currentIndex += 3 * bpcc;
                     }
 
                     PixelColorInfo.SetPixelBgra8(SourceImagePixels, currY, currX, sourcePixelColor, sourceImageWidth);
@@ -83,51 +83,66 @@ namespace GroupNStegafy.Model
             await SetEmbeddedImage(sourceImageHeight, sourceImageWidth);
         }
 
-        private Color embedTextMessage(BitArray messageBits, Color sourcePixelColor, int currentIndex)
+        private Color embedTextMessage(BitArray messageBits, Color sourcePixelColor, int currentIndex, int bpcc)
         {
             foreach (var i in Enumerable.Range(0, 3))
             {
-                currentIndex += i;
-
-                if (currentIndex < messageBits.Count
-                ) // if the current index is less than the amount of bits in the text, continue
+                if (currentIndex < messageBits.Count) // if the current index is less than the amount of bits in the text, continue
                 {
                     var messageBit = messageBits.Get(currentIndex); // current bit
 
-                    if (messageBit)
+                    //TESTING
+                    int leadingRemoved;
+                    byte color;
+
+                    if (i == 0)
                     {
-                        if ((i + 1) % 3 == 0)
-                        {
-                            sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
-                        }
-                        else if ((i + 1) % 2 == 0)
-                        {
-                            sourcePixelColor.G |= 1; //set LSB green source pixel to 1
-                        }
-                        else
-                        {
-                            sourcePixelColor.R |= 1; //set LSB red source pixel to 1
-                        }
+                        color = sourcePixelColor.R;
+                    }
+                    else if (i == 1)
+                    {
+                        color = sourcePixelColor.G;
                     }
                     else
                     {
-                        if ((i + 1) % 3 == 0)
-                        {
-                            sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
-                        }
-                        else if ((i + 1) % 2 == 0)
-                        {
-                            sourcePixelColor.G &= 0xfe; //set LSB green source pixel to 0
-                        }
-                        else
-                        {
-                            sourcePixelColor.R &= 0xfe; //set LSB red source pixel to 0
-                        }
+                        color = sourcePixelColor.B;
                     }
+
+                    leadingRemoved = color >> bpcc; // remove leading bpcc amount of bits
+                    leadingRemoved <<= bpcc; // add leading bpcc amount of bits as zeros
+                    var bitsToAdd = new BitArray(8); // create temp bit array
+
+                    for (var j = 0; j < bpcc; j++) // 
+                    {
+                        bitsToAdd.Set(j, messageBits[currentIndex + j]);
+                    }
+
+                    var bitsAsByte = new byte[1];
+                    bitsToAdd.CopyTo(bitsAsByte, 0);
+                    leadingRemoved |= bitsAsByte[0];
+                    color = (byte) leadingRemoved;
+
+                    if (i == 0)
+                    {
+                        sourcePixelColor.R = color;
+                    }
+                    else if (i == 1)
+                    {
+                        sourcePixelColor.G = color;
+                    }
+                    else
+                    {
+                        sourcePixelColor.B = color;
+                    }
+
+                    currentIndex += bpcc;
                 }
+
             }
 
             return sourcePixelColor;
+
+            //END TESTING
         }
 
         private int calculateBpccRequiredToEmbedText(int bitCount, uint totalSourcePixels)

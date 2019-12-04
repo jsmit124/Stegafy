@@ -15,15 +15,21 @@ namespace GroupNStegafy.Model
             input = input.ToUpper();
             password = password.ToUpper();
 
-            foreach (var t in input)
+            foreach (var currChar in input)
             {
-                if (t < 65) continue;
-                var tmp = t - 65 + type * (password[passwordCount] - 65);
+                var tmp = currChar - 65 + type * (password[passwordCount] - 65);
 
-                if (tmp < 0) tmp += 26;
+                if (tmp < 0)
+                {
+                    tmp += 26;
+                }
+
                 encryptedMessage += Convert.ToChar(65 + (tmp % 26));
 
-                if (++passwordCount == password.Length) passwordCount = 0;
+                if (++passwordCount == password.Length)
+                {
+                    passwordCount = 0;
+                }
             }
 
             return encryptedMessage;
