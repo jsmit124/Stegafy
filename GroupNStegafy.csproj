@@ -159,6 +159,7 @@
     <Content Include="Assets\TestImages\LargeTextFile.txt" />
     <Content Include="Assets\TestImages\monochromeTest.bmp" />
     <Content Include="Assets\TestImages\sunset.bmp" />
+    <Content Include="Assets\TestImages\testEmbeddedTextImage.png" />
     <Content Include="Assets\TestImages\testTextFile.txt" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
