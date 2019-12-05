@@ -12,6 +12,11 @@
         /// </summary>
         public static string EndOfTextFileIndication = "#.-.-. -#";
 
+        /// <summary>
+        ///     The end of encryption key indication
+        /// </summary>
+        public static string EndOfEncryptionKeyIndication = "#KEY#";
+
         #endregion
     }
 }

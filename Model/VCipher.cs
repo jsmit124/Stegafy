@@ -6,8 +6,10 @@ namespace GroupNStegafy.Model
     {
         private const int ENCRYPT = 1;
         private const int DECRYPT = -1;
+        private const int AsciiLetterA = 65;
+        private const int LettersInAlphabet = 26;
 
-        private string handleEncryption(string input, string password, int type)
+        private string handleEncryption(string input, string password, int encryptOrDecrypt)
         {
             var passwordCount = 0;
             var encryptedMessage = "";
@@ -17,14 +19,14 @@ namespace GroupNStegafy.Model
 
             foreach (var currChar in input)
             {
-                var tmp = currChar - 65 + type * (password[passwordCount] - 65);
+                var tmp = currChar - AsciiLetterA + encryptOrDecrypt * (password[passwordCount] - AsciiLetterA);
 
                 if (tmp < 0)
                 {
-                    tmp += 26;
+                    tmp += LettersInAlphabet;
                 }
 
-                encryptedMessage += Convert.ToChar(65 + (tmp % 26));
+                encryptedMessage += Convert.ToChar(AsciiLetterA + (tmp % LettersInAlphabet));
 
                 if (++passwordCount == password.Length)
                 {

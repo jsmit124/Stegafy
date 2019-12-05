@@ -91,7 +91,6 @@ namespace GroupNStegafy.Model
                 {
                     var messageBit = messageBits.Get(currentIndex); // current bit
 
-                    //TESTING
                     int leadingRemoved;
                     byte color;
 
@@ -110,15 +109,23 @@ namespace GroupNStegafy.Model
 
                     leadingRemoved = color >> bpcc; // remove leading bpcc amount of bits
                     leadingRemoved <<= bpcc; // add leading bpcc amount of bits as zeros
-                    var bitsToAdd = new BitArray(8); // create temp bit array
 
+                    var bitsToAdd = new BitArray(8); // create temp bit array
                     for (var j = 0; j < bpcc; j++) // 
                     {
-                        bitsToAdd.Set(j, messageBits[currentIndex + j]);
+                        if (currentIndex + j < messageBits.Count)
+                        {
+                            bitsToAdd.Set(j, messageBits[currentIndex + j]);
+                        }
+                        else
+                        {
+                            bitsToAdd.Set(j, false);
+                        }
                     }
 
-                    var bitsAsByte = new byte[1];
-                    bitsToAdd.CopyTo(bitsAsByte, 0);
+                    var bitsAsByte = new byte[1]; //create empty byte
+                    bitsToAdd.CopyTo(bitsAsByte, 0); //set byte to specified number of bits
+
                     leadingRemoved |= bitsAsByte[0];
                     color = (byte) leadingRemoved;
 
@@ -141,8 +148,6 @@ namespace GroupNStegafy.Model
             }
 
             return sourcePixelColor;
-
-            //END TESTING
         }
 
         private int calculateBpccRequiredToEmbedText(int bitCount, uint totalSourcePixels)
