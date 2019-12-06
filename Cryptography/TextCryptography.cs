@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace GroupNStegafy.Cryptography
 {
@@ -12,10 +13,9 @@ namespace GroupNStegafy.Cryptography
         private static string handleEncryption(string password, string input, int encryptOrDecrypt)
         {
             var passwordCount = 0;
-            var encryptedMessage = "";
+            var encryptedMessage = new StringBuilder();
 
             input = input.ToUpper();
-            password = password.ToUpper();
 
             foreach (var currChar in input)
             {
@@ -26,7 +26,7 @@ namespace GroupNStegafy.Cryptography
                     tmp += LettersInAlphabet;
                 }
 
-                encryptedMessage += Convert.ToChar(AsciiLetterA + (tmp % LettersInAlphabet));
+                encryptedMessage.Append(Convert.ToChar(AsciiLetterA + (tmp % LettersInAlphabet)));
 
                 if (++passwordCount == password.Length)
                 {
@@ -34,7 +34,7 @@ namespace GroupNStegafy.Cryptography
                 }
             }
 
-            return encryptedMessage;
+            return encryptedMessage.ToString();
         }
 
         public static string Encrypt(string password, string input)
