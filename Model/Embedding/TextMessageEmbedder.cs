@@ -8,12 +8,12 @@ using GroupNStegafy.Formatter;
 using GroupNStegafy.Utility;
 using GroupNStegafy.View;
 
-namespace GroupNStegafy.Model
+namespace GroupNStegafy.Model.Embedding
 {
     /// <summary>
     ///     Stores information for the TextMessageEmbedder class
     /// </summary>
-    /// <seealso cref="GroupNStegafy.Model.MessageEmbedder" />
+    /// <seealso cref="MessageEmbedder" />
     public class TextMessageEmbedder : MessageEmbedder
     {
         #region Methods

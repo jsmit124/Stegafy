@@ -17,6 +17,7 @@ using GroupNStegafy.Converter;
 using GroupNStegafy.Formatter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Model;
+using GroupNStegafy.Model.Embedding;
 using GroupNStegafy.Utility;
 
 namespace GroupNStegafy.Controller

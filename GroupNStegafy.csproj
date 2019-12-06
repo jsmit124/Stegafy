@@ -132,11 +132,11 @@
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
     <Compile Include="Formatter\HeaderPixelFormatter.cs" />
-    <Compile Include="Model\MessageEmbedder.cs" />
-    <Compile Include="Model\MessageExtracter.cs" />
-    <Compile Include="Model\MonochromeImageEmbedder.cs" />
-    <Compile Include="Model\MonochromeImageExtracter.cs" />
-    <Compile Include="Model\TextMessageEmbedder.cs" />
+    <Compile Include="Model\Embedding\MessageEmbedder.cs" />
+    <Compile Include="Model\Extracting\MessageExtracter.cs" />
+    <Compile Include="Model\Embedding\MonochromeImageEmbedder.cs" />
+    <Compile Include="Model\Extracting\MonochromeImageExtracter.cs" />
+    <Compile Include="Model\Embedding\TextMessageEmbedder.cs" />
     <Compile Include="Cryptography\TextCryptography.cs" />
     <Compile Include="Utility\PixelExtracter.cs" />
     <Compile Include="Utility\PixelColorInfo.cs" />

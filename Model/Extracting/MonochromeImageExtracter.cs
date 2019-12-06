@@ -1,12 +1,11 @@
-﻿
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Utility;
 using GroupNStegafy.View;
 
-namespace GroupNStegafy.Model
+namespace GroupNStegafy.Model.Extracting
 {
     public class MonochromeImageExtracter : MessageExtracter
     {

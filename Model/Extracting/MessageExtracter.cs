@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace GroupNStegafy.Model
+namespace GroupNStegafy.Model.Extracting
 {
     public abstract class MessageExtracter
     {

@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Controller;
+using GroupNStegafy.Enumerables;
 
 namespace GroupNStegafy.View
 {
@@ -87,6 +88,7 @@ namespace GroupNStegafy.View
             }
 
             this.checkIfMessageLoadedToEnableLoadSourceButton();
+            this.checkIfSourceLoadedToEnableSettings();
             this.progressRing.IsActive = false;
         }
 
@@ -100,7 +102,7 @@ namespace GroupNStegafy.View
             var bpcc = int.Parse(bpccSelection.Content.ToString());
             var encryptionKey = this.encryptionKeyTextBox.Text;
 
-            if (encryptionIsChecked && encryptionKey.Equals(string.Empty))
+            if (encryptionIsChecked && encryptionKey.Equals(string.Empty) && this.embedManager.MessageFileType.Equals(FileTypeConstants.TextFileType))
             {
                 await Dialogs.ShowNoEncryptionKeyInput();
                 this.progressRing.IsActive = false;
@@ -135,8 +137,26 @@ namespace GroupNStegafy.View
         {
             if (this.embedManager.SourceImageLoaded())
             {
-                this.enableSettingsOptions();
+                this.enableUniversalEmbedSettings();
+
+                if (this.embedManager.MessageFileType.Equals(FileTypeConstants.TextFileType))
+                {
+                    this.enableTextSettingsOptions();
+                }
+                else
+                {
+                    this.resetSettings();
+                    this.disableTextSettingsOptions();
+                    this.embedButton.IsEnabled = true;
+                    this.encryptionSelectionCheckBox.IsEnabled = true;
+                }
             }
+        }
+
+        private void disableTextSettingsOptions()
+        {
+            this.BPCCSelectionComboBox.IsEnabled = false;
+            this.encryptionKeyTextBox.IsEnabled = false;
         }
 
         private void checkIfMessageLoadedToEnableLoadSourceButton()
@@ -147,11 +167,16 @@ namespace GroupNStegafy.View
             }
         }
 
-        private void enableSettingsOptions()
+        private void enableTextSettingsOptions()
+        {
+            this.BPCCSelectionComboBox.IsEnabled = true;
+            this.encryptionKeyTextBox.IsEnabled = true;
+        }
+
+        private void enableUniversalEmbedSettings()
         {
             this.embedButton.IsEnabled = true;
             this.encryptionSelectionCheckBox.IsEnabled = true;
-            this.BPCCSelectionComboBox.IsEnabled = true;
         }
 
         private void hideMessageDisplays()
@@ -159,6 +184,12 @@ namespace GroupNStegafy.View
             this.monochromeImageDisplay.Visibility = Visibility.Collapsed;
             this.textFileDisplay.Visibility = Visibility.Collapsed;
             this.textFileScroller.Visibility = Visibility.Collapsed;
+        }
+
+        private void resetSettings()
+        {
+            this.encryptionKeyTextBox.Text = "";
+            this.BPCCSelectionComboBox.SelectedIndex = 0;
         }
 
         #endregion

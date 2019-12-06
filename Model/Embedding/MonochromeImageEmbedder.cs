@@ -5,12 +5,12 @@ using GroupNStegafy.Formatter;
 using GroupNStegafy.Utility;
 using GroupNStegafy.View;
 
-namespace GroupNStegafy.Model
+namespace GroupNStegafy.Model.Embedding
 {
     /// <summary>
     ///     Stores information for the MonochromeImageEmbedder class
     /// </summary>
-    /// <seealso cref="GroupNStegafy.Model.MessageEmbedder" />
+    /// <seealso cref="MessageEmbedder" />
     public class MonochromeImageEmbedder : MessageEmbedder
     {
         #region Methods

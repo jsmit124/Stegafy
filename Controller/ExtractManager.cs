@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Converter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Model;
+using GroupNStegafy.Model.Extracting;
 using GroupNStegafy.Utility;
 
 namespace GroupNStegafy.Controller

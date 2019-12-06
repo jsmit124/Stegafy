@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace GroupNStegafy.Model
+namespace GroupNStegafy.Model.Embedding
 {
     /// <summary>
     ///     Stores information for the abstract Embedder class
