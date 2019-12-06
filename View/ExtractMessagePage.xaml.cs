@@ -1,14 +1,8 @@
-﻿using System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
+﻿using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Controller;
-using GroupNStegafy.Utility;
 
 namespace GroupNStegafy.View
 {
@@ -21,12 +15,6 @@ namespace GroupNStegafy.View
 
         private readonly double applicationHeight = (double) Application.Current.Resources["AppHeight"];
         private readonly double applicationWidth = (double) Application.Current.Resources["AppWidth"];
-
-        private double dpiX;
-        private double dpiY;
-
-        private WriteableBitmap extractedImage;
-        private StorageFile embeddedImageFile;
 
         private readonly ExtractManager extractManager;
 
@@ -48,12 +36,6 @@ namespace GroupNStegafy.View
                            .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
 
             this.extractManager = new ExtractManager();
-
-            this.extractedImage = null;
-            this.embeddedImageFile = null;
-
-            this.dpiX = 0;
-            this.dpiY = 0;
         }
 
         #endregion
@@ -79,26 +61,18 @@ namespace GroupNStegafy.View
 
         private async void extractButton_Click(object sender, RoutedEventArgs e)
         {
-            var embeddedDecoder =
-                await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
-            var embeddedPixels = await PixelExtracter.ExtractPixelDataFromFile(this.embeddedImageFile);
+            await this.extractManager.ExtractMessage();
 
-            await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
-
-            this.extractedImage =
-                new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);
-            using (var writeStream = this.extractedImage.PixelBuffer.AsStream())
+            if (this.extractManager.ExtractedImage != null)
             {
-                await writeStream.WriteAsync(embeddedPixels, 0, embeddedPixels.Length);
-                this.decryptedImageDisplay.Source = this.extractedImage;
+                this.decryptedImageDisplay.Source = this.extractManager.ExtractedImage;
+                this.saveDecryptedMessageButton.IsEnabled = true;
             }
-
-            this.saveDecryptedMessageButton.IsEnabled = true;
         }
 
         private void saveDecryptedMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            this.extractManager.SaveExtractedMessage(this.extractedImage, this.dpiX, this.dpiY);
+            this.extractManager.SaveExtractedMessage();
         }
 
         #endregion

@@ -89,7 +89,6 @@ namespace GroupNStegafy.Model
             {
                 if (currentIndex < messageBits.Count) // if the current index is less than the amount of bits in the text, continue
                 {
-                    int leadingRemoved;
                     byte color;
 
                     if (i == 0)
@@ -105,7 +104,7 @@ namespace GroupNStegafy.Model
                         color = sourcePixelColor.B;
                     }
 
-                    leadingRemoved = color >> bpcc; // remove leading bpcc amount of bits
+                    var leadingRemoved = color >> bpcc;
                     leadingRemoved <<= bpcc; // add leading bpcc amount of bits as zeros
 
                     var bitsToAdd = new BitArray(8); // create temp bit array

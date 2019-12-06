@@ -1,6 +1,8 @@
 ﻿
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.UI;
+using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Utility;
 using GroupNStegafy.View;
 
@@ -49,6 +51,13 @@ namespace GroupNStegafy.Model
 
                     PixelColorInfo.SetPixelBgra8(embeddedPixels, currY, currX, embeddedPixelColor, embeddedImageWidth);
                 }
+            }
+
+            this.ExtractedMessage =
+                new WriteableBitmap((int)embeddedImageWidth, (int)embeddedImageHeight);
+            using (var writeStream = this.ExtractedMessage.PixelBuffer.AsStream())
+            {
+                await writeStream.WriteAsync(embeddedPixels, 0, embeddedPixels.Length);
             }
         }
 
