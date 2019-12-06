@@ -62,7 +62,7 @@
             <ComboBoxItem Content="7" />
             <ComboBoxItem Content="8" />
         </ComboBox>
-        <TextBox HorizontalAlignment="Left" Margin="991,576,0,0" PlaceholderText="Encryption Key" TextWrapping="Wrap"
+        <TextBox x:Name ="encryptionKeyTextBox" HorizontalAlignment="Left" Margin="991,576,0,0" PlaceholderText="Encryption Key" TextWrapping="Wrap"
                  VerticalAlignment="Top" Width="209"
                  Visibility="{Binding Path=IsChecked, ElementName=encryptionSelectionCheckBox}"
                  extensions:TextBoxRegex.ValidationMode="Dynamic"

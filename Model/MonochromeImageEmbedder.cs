@@ -10,8 +10,8 @@ namespace GroupNStegafy.Model
     /// <summary>
     ///     Stores information for the MonochromeImageEmbedder class
     /// </summary>
-    /// <seealso cref="GroupNStegafy.Model.Embedder" />
-    public class MonochromeImageEmbedder : Embedder
+    /// <seealso cref="GroupNStegafy.Model.MessageEmbedder" />
+    public class MonochromeImageEmbedder : MessageEmbedder
     {
         #region Methods
 

@@ -21,13 +21,13 @@ namespace GroupNStegafy.Controller
     /// <summary>
     ///     Stores information for the StegafyManager class
     /// </summary>
-    public class StegafyManager
+    public class EmbedManager
     {
         #region Data members
 
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
-        private Embedder messageEmbedder;
+        private MessageEmbedder messageEmbedder;
         private StorageFile sourceImageFile;
         private StorageFile messageFile;
         private double dpiX;
@@ -80,9 +80,9 @@ namespace GroupNStegafy.Controller
         #region Constructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="StegafyManager" /> class.
+        ///     Initializes a new instance of the <see cref="EmbedManager" /> class.
         /// </summary>
-        public StegafyManager()
+        public EmbedManager()
         {
             this.fileReader = new FileReader();
             this.fileWriter = new FileWriter();
@@ -124,6 +124,12 @@ namespace GroupNStegafy.Controller
                 this.messageEmbedder = new MonochromeImageEmbedder();
                 this.MessageImage = await FileBitmapConverter.ConvertFileToBitmap(this.messageFile);
             }
+
+            if (this.SourceImage != null)
+            {
+                var sourceImagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.sourceImageFile);
+                this.messageEmbedder.SetSourceImagePixels(sourceImagePixels);
+            }
         }
 
         /// <summary>
@@ -146,16 +152,27 @@ namespace GroupNStegafy.Controller
             await this.setSourceImageSizeValues();
         }
 
+
         /// <summary>
         ///     Embeds the message.
         /// </summary>
         /// <param name="encryptionSelected">if set to <c>true</c> [encryption selected].</param>
         /// <param name="bpcc">The BPCC.</param>
-        public async Task EmbedMessage(bool encryptionSelected, int bpcc)
+        /// <param name="encryptionKey">The encryption key.</param>
+        public async Task EmbedMessage(bool encryptionSelected, int bpcc, string encryptionKey)
         {
             if (this.messageFile.FileType == FileTypeConstants.TextFileType)
             {
-                var formattedText = this.formatTextForEmbedding(this.TextFromFile);
+                string formattedText;
+                if (encryptionSelected)
+                {
+                    formattedText = EmbedTextFormatter.FormatEncryptedTextForEmbedding(encryptionKey, this.TextFromFile);
+                }
+                else
+                {
+                    formattedText = EmbedTextFormatter.FormatTextForEmbedding(this.TextFromFile);
+                }
+
                 var binaryText = BinaryStringConverter.ConvertStringToBinary(formattedText);
                 var messageLength = binaryText.Length;
 
@@ -242,11 +259,6 @@ namespace GroupNStegafy.Controller
                 this.sourceImageHeight = decoder.PixelHeight;
                 this.sourceImageWidth = decoder.PixelWidth;
             }
-        }
-
-        private string formatTextForEmbedding(string text)
-        {
-            return EmbeddingStringFormatter.FormatForEmbedding(text) + TextMessageConstants.EndOfTextFileIndication;
         }
 
         #endregion

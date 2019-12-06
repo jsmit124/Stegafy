@@ -61,14 +61,14 @@ namespace GroupNStegafy.View
         /// </summary>
         public static async Task ShowNotPossibleToEmbedTextDialog()
         {
-            var noMessageDialog = new ContentDialog {
+            var notPossibletoEmbedTextDialog = new ContentDialog {
                 Title = "ERROR",
                 Content = "Text cannot be embedded into this image." + Environment.NewLine +
                           "Choose another source image and try again.",
                 CloseButtonText = "Ok"
             };
 
-            await noMessageDialog.ShowAsync();
+            await notPossibletoEmbedTextDialog.ShowAsync();
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace GroupNStegafy.View
         /// </summary>
         public static async Task ShowRequiredBpccToEmbedTextDialog(int requiredBpcc)
         {
-            var noMessageDialog = new ContentDialog {
+            var requiredBpccDialog = new ContentDialog {
                 Title = "ERROR",
                 Content = "Text cannot be embedded into this image with currently selected BPCC count."
                           + Environment.NewLine + "To embed this message, it will require a BPCC selection of " +
@@ -84,7 +84,22 @@ namespace GroupNStegafy.View
                 CloseButtonText = "Ok"
             };
 
-            await noMessageDialog.ShowAsync();
+            await requiredBpccDialog.ShowAsync();
+        }
+
+        /// <summary>
+        ///     Shows the error no encryption key dialog.
+        /// </summary>
+        public static async Task ShowNoEncryptionKeyInput()
+        {
+            var noKeyDialog = new ContentDialog
+            {
+                Title = "ERROR",
+                Content = "No encryption key was input. Please input a key to use for encryption.",
+                CloseButtonText = "Ok"
+            };
+
+            await noKeyDialog.ShowAsync();
         }
 
         #endregion
