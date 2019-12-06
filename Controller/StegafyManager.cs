@@ -5,10 +5,12 @@ using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
+using GroupNStegafy.Cryptography;
 using GroupNStegafy.Formatter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Model;
 using GroupNStegafy.Utility;
+using GroupNStegafy.View;
 
 namespace GroupNStegafy.Controller
 {
@@ -118,6 +120,12 @@ namespace GroupNStegafy.Controller
                 this.messageEmbedder = new MonochromeImageEmbedder();
                 this.MessageImage = await FileBitmapConverter.ConvertFileToBitmap(this.messageFile);
             }
+
+            if (this.SourceImage != null)
+            {
+                var sourceImagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.sourceImageFile);
+                this.messageEmbedder.SetSourceImagePixels(sourceImagePixels);
+            }
         }
 
         /// <summary>
@@ -140,16 +148,27 @@ namespace GroupNStegafy.Controller
             await this.setSourceImageSizeValues();
         }
 
+
         /// <summary>
         ///     Embeds the message.
         /// </summary>
         /// <param name="encryptionSelected">if set to <c>true</c> [encryption selected].</param>
         /// <param name="bpcc">The BPCC.</param>
-        public async Task EmbedMessage(bool encryptionSelected, int bpcc)
+        /// <param name="encryptionKey">The encryption key.</param>
+        public async Task EmbedMessage(bool encryptionSelected, int bpcc, string encryptionKey)
         {
             if (this.messageFile.FileType == FileTypeConstants.TextFileType)
             {
-                var formattedText = this.formatTextForEmbedding(this.TextFromFile);
+                string formattedText;
+                if (encryptionSelected)
+                {
+                    formattedText = this.formatEncryptedTextForEmbedding(encryptionKey, this.TextFromFile);
+                }
+                else
+                {
+                    formattedText = this.formatTextForEmbedding(this.TextFromFile);
+                }
+
                 var binaryText = BinaryStringConverter.ConvertStringToBinary(formattedText);
                 var messageLength = binaryText.Length;
 
@@ -202,6 +221,14 @@ namespace GroupNStegafy.Controller
         private string formatTextForEmbedding(string text)
         {
             return EmbeddingStringFormatter.FormatForEmbedding(text) + TextMessageConstants.EndOfTextFileIndication;
+        }
+
+        private string formatEncryptedTextForEmbedding(string password, string text)
+        {
+            text = EmbeddingStringFormatter.FormatForEmbedding(text);
+
+            return password + TextMessageConstants.EndOfEncryptionKeyIndication +
+                   TextCryptography.Encrypt(password, text) + TextMessageConstants.EndOfTextFileIndication;
         }
 
         #endregion

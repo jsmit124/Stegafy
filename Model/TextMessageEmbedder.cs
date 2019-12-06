@@ -89,8 +89,6 @@ namespace GroupNStegafy.Model
             {
                 if (currentIndex < messageBits.Count) // if the current index is less than the amount of bits in the text, continue
                 {
-                    var messageBit = messageBits.Get(currentIndex); // current bit
-
                     int leadingRemoved;
                     byte color;
 

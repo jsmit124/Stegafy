@@ -97,8 +97,16 @@ namespace GroupNStegafy.View
             var encryptionIsChecked = this.encryptionSelectionCheckBox.IsChecked.Value;
             var bpccSelection = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
             var bpcc = int.Parse(bpccSelection.Content.ToString());
+            var encryptionKey = this.encryptionKeyTextBox.Text;
 
-            await this.stegafyManager.EmbedMessage(encryptionIsChecked, bpcc);
+            if (encryptionIsChecked && encryptionKey.Equals(string.Empty))
+            {
+                await Dialogs.ShowNoEncryptionKeyInput();
+                this.progressRing.IsActive = false;
+                return;
+            }
+
+            await this.stegafyManager.EmbedMessage(encryptionIsChecked, bpcc, encryptionKey);
 
             if (this.stegafyManager.MessageTooLarge)
             {

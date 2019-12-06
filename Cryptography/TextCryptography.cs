@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace GroupNStegafy.Model
+namespace GroupNStegafy.Cryptography
 {
-    public class VCipher
+    public static class TextCryptography
     {
         private const int ENCRYPT = 1;
         private const int DECRYPT = -1;
         private const int AsciiLetterA = 65;
         private const int LettersInAlphabet = 26;
 
-        private string handleEncryption(string input, string password, int encryptOrDecrypt)
+        private static string handleEncryption(string password, string input, int encryptOrDecrypt)
         {
             var passwordCount = 0;
             var encryptedMessage = "";
@@ -37,14 +37,14 @@ namespace GroupNStegafy.Model
             return encryptedMessage;
         }
 
-        public string Encrypt(string input, string password)
+        public static string Encrypt(string password, string input)
         {
-            return this.handleEncryption(input, password, ENCRYPT);
+            return handleEncryption(password, input, ENCRYPT);
         }
 
-        public string Decrypt(string input, string password)
+        public static string Decrypt(string password, string input)
         {
-            return this.handleEncryption(input, password, DECRYPT);
+            return handleEncryption(password, input, DECRYPT);
         }
     }
 }
