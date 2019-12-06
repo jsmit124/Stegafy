@@ -94,7 +94,8 @@ namespace GroupNStegafy.View
         {
             this.progressRing.IsActive = true;
 
-            var encryptionIsChecked = this.encryptionSelectionCheckBox.IsChecked.Value;
+            var isChecked = this.encryptionSelectionCheckBox.IsChecked;
+            var encryptionIsChecked = isChecked != null && isChecked.Value;
             var bpccSelection = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
             var bpcc = int.Parse(bpccSelection.Content.ToString());
 

@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Appointments;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
@@ -185,6 +191,45 @@ namespace GroupNStegafy.Controller
         public bool SourceImageLoaded()
         {
             return this.sourceImageFile != null;
+        }
+
+        private byte[] swapQuadrants(byte[] messageBytes, uint messageWidth, uint messageHeight)
+        {
+            byte[] swappedBytes;
+            var halfHeight = messageHeight / 2;
+            for (var i = (int)halfHeight; i < messageHeight; i++)
+            {
+                for (var j = 0; j < messageWidth; j++)
+                {
+                    var messagePixelColor = PixelColorInfo.GetPixelBgra8(messageBytes, i, j, messageWidth);
+                    if (isBlackPixel(messagePixelColor))
+                    {
+                        sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
+                        
+                    }
+                    else if (isWhitePixel(messagePixelColor))
+                    {
+                        sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
+                    }
+                }
+            }
+
+            return messageBytes;
+        }
+
+        //TODO this is violating DRY, but using to test
+        private static bool isWhitePixel(Color messagePixelColor)
+        {
+            return messagePixelColor.R == 255
+                   && messagePixelColor.B == 255
+                   && messagePixelColor.G == 255;
+        }
+
+        private static bool isBlackPixel(Color messagePixelColor)
+        {
+            return messagePixelColor.R == 0
+                   && messagePixelColor.B == 0
+                   && messagePixelColor.G == 0;
         }
 
         private async Task setSourceImageSizeValues()
