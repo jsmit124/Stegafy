@@ -6,7 +6,9 @@ namespace GroupNStegafy.Model.Extracting
     public abstract class MessageExtracter
     {
         public byte[] EmbeddedPixels;
-        public WriteableBitmap ExtractedMessage { get; protected set; }
+        public WriteableBitmap ExtractedImage { get; protected set; }
+        public string ExtractedText { get; private set; }
+        public bool EncryptionUsed;
 
         public abstract Task ExtractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth, uint embeddedImageHeight);
 

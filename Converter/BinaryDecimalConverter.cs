@@ -25,6 +25,22 @@ namespace GroupNStegafy.Converter
             return Convert.ToInt32(sum);
         }
 
+        /// <summary>
+        ///     Calculates the BPCC from binary.
+        /// </summary>
+        /// <param name="bits">The bits.</param>
+        /// <returns>The Bpcc found in the byte</returns>
+        public static int CalculateBpccFromBinary(byte bits)
+        {
+            var bpcc = 1;
+            for (var i = 1; CalculateBinaryForBpcc(i) < bits; i++)
+            {
+                bpcc++;
+            }
+
+            return bpcc;
+        }
+
         #endregion
     }
 }

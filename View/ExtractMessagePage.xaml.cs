@@ -65,8 +65,20 @@ namespace GroupNStegafy.View
 
             if (this.extractManager.ExtractedImage != null)
             {
+                if (this.extractManager.EncryptionUsed)
+                {
+                    //TODO handle decrypting image
+                }
                 this.decryptedImageDisplay.Source = this.extractManager.ExtractedImage;
                 this.saveDecryptedMessageButton.IsEnabled = true;
+            }
+            else if (this.extractManager.ExtractedText != null)
+            {
+                if (this.extractManager.EncryptionUsed)
+                {
+                    //TODO handle decrypting text
+                }
+                //TODO handle displaying text
             }
         }
 

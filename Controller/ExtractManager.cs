@@ -5,6 +5,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Converter;
+using GroupNStegafy.Enumerables;
 using GroupNStegafy.IO;
 using GroupNStegafy.Model;
 using GroupNStegafy.Model.Extracting;
@@ -23,7 +24,9 @@ namespace GroupNStegafy.Controller
         public StorageFile EmbeddedImageFile { get; private set; }
 
         public BitmapImage EmbeddedImage { get; private set; }
-        public WriteableBitmap ExtractedImage => this.messageExtracter.ExtractedMessage;
+        public WriteableBitmap ExtractedImage => this.messageExtracter.ExtractedImage;
+        public string ExtractedText => this.messageExtracter.ExtractedText;
+        public bool EncryptionUsed => this.messageExtracter.EncryptionUsed;
 
 
         public ExtractManager()
@@ -45,10 +48,21 @@ namespace GroupNStegafy.Controller
 
         public async Task ExtractMessage()
         {
-            this.messageExtracter = new MonochromeImageExtracter();
+            var embeddedPixels = await PixelExtracter.ExtractPixelDataFromFile(this.EmbeddedImageFile);
             var embeddedDecoder =
                 await BitmapDecoder.CreateAsync(await this.EmbeddedImageFile.OpenAsync(FileAccessMode.Read));
-            var embeddedPixels = await PixelExtracter.ExtractPixelDataFromFile(this.EmbeddedImageFile);
+
+            var fileTypeEmbedded = EmbeddedMessageFileTypeExtractor.DetermineFileTypeToExtract(embeddedPixels, embeddedDecoder.PixelWidth);
+
+            if (fileTypeEmbedded == FileTypes.Text)
+            {
+                this.messageExtracter = new TextFileExtracter();
+            }
+            else
+            {
+                this.messageExtracter = new MonochromeImageExtracter();
+            }
+
             await this.setExtractedImageSizeValues();
 
             await this.messageExtracter.ExtractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);

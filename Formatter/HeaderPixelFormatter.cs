@@ -36,13 +36,13 @@ namespace GroupNStegafy.Formatter
         /// </summary>
         /// <param name="fileType">The file type.</param>
         /// <param name="sourcePixelColor">Color of the source pixel.</param>
-        /// <param name="isChecked">if set to <c>true</c> [is checked].</param>
+        /// <param name="encryptionUsed">if set to <c>true</c> [is checked].</param>
         /// <param name="bpcc">The BPCC.</param>
         /// <returns>The pixel color of the second header pixel</returns>
-        public static Color FormatSecondHeaderPixel(FileTypes fileType, Color sourcePixelColor, bool isChecked,
+        public static Color FormatSecondHeaderPixel(FileTypes fileType, Color sourcePixelColor, bool encryptionUsed,
             int bpcc)
         {
-            sourcePixelColor = handleEncryptionSelectionHeader(isChecked, sourcePixelColor);
+            sourcePixelColor = handleEncryptionSelectionHeader(encryptionUsed, sourcePixelColor);
             sourcePixelColor = handleBpccSelectionHeader(bpcc, sourcePixelColor);
             sourcePixelColor = handleEmbeddingTypeHeader(sourcePixelColor, fileType);
 
@@ -53,11 +53,11 @@ namespace GroupNStegafy.Formatter
         {
             if (fileType == FileTypes.Text)
             {
-                sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
+                sourcePixelColor.B |= 1;
             }
             else
             {
-                sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
+                sourcePixelColor.B &= 0xfe;
             }
 
             return sourcePixelColor;
@@ -66,21 +66,21 @@ namespace GroupNStegafy.Formatter
         private static Color handleBpccSelectionHeader(int bpcc, Color sourcePixelColor)
         {
             var binaryBpcc =
-                BinaryDecimalConverter.CalculateBinaryForBpcc(bpcc); // convert bpcc to binary representation
-            sourcePixelColor.G = (byte) binaryBpcc; // set the green channel to binary representation of bpcc selection
+                BinaryDecimalConverter.CalculateBinaryForBpcc(bpcc);
+            sourcePixelColor.G = (byte) binaryBpcc;
 
             return sourcePixelColor;
         }
 
-        private static Color handleEncryptionSelectionHeader(bool? isChecked, Color sourcePixelColor)
+        private static Color handleEncryptionSelectionHeader(bool? encryptionUsed, Color sourcePixelColor)
         {
-            if (isChecked != null && (bool) isChecked)
+            if (encryptionUsed != null && (bool) encryptionUsed)
             {
-                sourcePixelColor.R |= 1; //set LSB red source pixel to 1
+                sourcePixelColor.R |= 1;
             }
             else
             {
-                sourcePixelColor.R &= 0xfe; //set LSB red source pixel to 0
+                sourcePixelColor.R &= 0xfe;
             }
 
             return sourcePixelColor;
