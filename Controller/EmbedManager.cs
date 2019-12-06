@@ -1,7 +1,16 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Appointments;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
@@ -40,12 +49,6 @@ namespace GroupNStegafy.Controller
         public WriteableBitmap EmbeddedImage => this.messageEmbedder.EmbeddedImage;
 
         /// <summary>
-        ///     Gets the type of the message file.
-        /// </summary>
-        /// <value>The type of the message file.</value>
-        public string MessageFileType => this.messageFile.FileType;
-
-        /// <summary>
         ///     Gets a value indicating whether [message too large].
         /// </summary>
         /// <value><c>true</c> if [message too large]; otherwise, <c>false</c>.</value>
@@ -62,6 +65,12 @@ namespace GroupNStegafy.Controller
         /// </summary>
         /// <value>The message image.</value>
         public BitmapImage MessageImage { get; private set; }
+
+        /// <summary>
+        ///     Gets the type of the message file.
+        /// </summary>
+        /// <value>The type of the message file.</value>
+        public string MessageFileType => this.messageFile.FileType;
 
         /// <summary>
         ///     Gets the text from file.
@@ -181,9 +190,36 @@ namespace GroupNStegafy.Controller
                 var messageImageWidth = messageDecoder.PixelWidth;
                 var messageImageHeight = messageDecoder.PixelHeight;
 
+                if (encryptionSelected)
+                {
+                    var halfMessageLength = messagePixels.Length / 2;
+                    var bottomHalf = messagePixels.Skip(halfMessageLength);
+                    var topHalf = new byte[halfMessageLength];
+                    Array.Copy(messagePixels, 0, topHalf, 0, halfMessageLength);
+
+                    var swappedImage = bottomHalf.Union(topHalf);
+                    messagePixels = (byte[]) swappedImage;
+                }
+
                 await this.messageEmbedder.EmbedMessageInImage(messagePixels, messageImageWidth, messageImageHeight,
                     this.sourceImageWidth, this.sourceImageHeight, encryptionSelected, bpcc);
             }
+        }
+
+        private int getImageHalfHeight(BitmapImage image)
+        {
+            if (this.imageHeightIsEven(image))
+            {
+                return image.PixelHeight / 2;
+            }
+
+            return (image.PixelHeight - 1) / 2;
+        }
+
+        private bool imageHeightIsEven(BitmapImage image)
+        {
+            var heightIsEven = image.PixelHeight % 2 == 0;
+            return heightIsEven;
         }
 
         /// <summary>
