@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,12 +47,6 @@ namespace GroupNStegafy.Controller
         public WriteableBitmap EmbeddedImage => this.messageEmbedder.EmbeddedImage;
 
         /// <summary>
-        ///     Gets the type of the message file.
-        /// </summary>
-        /// <value>The type of the message file.</value>
-        public string MessageFileType => this.messageFile.FileType;
-
-        /// <summary>
         ///     Gets a value indicating whether [message too large].
         /// </summary>
         /// <value><c>true</c> if [message too large]; otherwise, <c>false</c>.</value>
@@ -68,6 +63,12 @@ namespace GroupNStegafy.Controller
         /// </summary>
         /// <value>The message image.</value>
         public BitmapImage MessageImage { get; private set; }
+
+        /// <summary>
+        ///     Gets the type of the message file.
+        /// </summary>
+        /// <value>The type of the message file.</value>
+        public string MessageFileType => this.messageFile.FileType;
 
         /// <summary>
         ///     Gets the text from file.
@@ -181,15 +182,69 @@ namespace GroupNStegafy.Controller
             }
             else
             {
-                var messageDecoder =
-                    await BitmapDecoder.CreateAsync(await this.messageFile.OpenAsync(FileAccessMode.Read));
-                var messagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.messageFile);
-                var messageImageWidth = messageDecoder.PixelWidth;
-                var messageImageHeight = messageDecoder.PixelHeight;
+                if (encryptionSelected)
+                {
+                    //var topLeft = new BitmapImage();
+                    //var topRight = new BitmapImage();
+                    //var bottomLeft = new BitmapImage();
+                    //var bottomRight = new BitmapImage();
 
-                await this.messageEmbedder.EmbedMessageInImage(messagePixels, messageImageWidth, messageImageHeight,
-                    this.sourceImageWidth, this.sourceImageHeight, encryptionSelected, bpcc);
+                    var hasMiddle = false;
+                    var halfMessageHeight = this.MessageImage.PixelHeight;
+
+                    var topHalf = new RectangleF(0, 0, this.MessageImage.PixelWidth, halfMessageHeight);
+                    var middleHalf = new RectangleF();
+                    var bottomHalf = new RectangleF();
+
+                    if (this.imageHeightIsEven(this.MessageImage))
+                    {
+                        bottomHalf = new RectangleF(0, halfMessageHeight, this.MessageImage.PixelWidth, this.MessageImage.PixelHeight);
+                    }
+                    else
+                    {
+                        bottomHalf = new RectangleF(0, halfMessageHeight + 2, this.MessageImage.PixelWidth, this.MessageImage.PixelHeight);
+                        hasMiddle = true;
+                    }
+
+                    var topMessage = new BitmapImage();
+                    var bottomMessage = new BitmapImage();
+
+                    if (hasMiddle)
+                    {
+                        middleHalf = new RectangleF(0, halfMessageHeight + 1, this.MessageImage.PixelWidth, halfMessageHeight + 1);
+                        var middleMessage = new BitmapImage();
+                    }
+                }
+                else
+                {
+
+                    var messageDecoder =
+                        await BitmapDecoder.CreateAsync(await this.messageFile.OpenAsync(FileAccessMode.Read));
+                    var messagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.messageFile);
+                    var messageImageWidth = messageDecoder.PixelWidth;
+                    var messageImageHeight = messageDecoder.PixelHeight;
+
+                    await this.messageEmbedder.EmbedMessageInImage(messagePixels, messageImageWidth, messageImageHeight,
+                        this.sourceImageWidth, this.sourceImageHeight, encryptionSelected, bpcc);
+
+                }
             }
+        }
+
+        private int getImageHalfHeight(BitmapImage image)
+        {
+            if (this.imageHeightIsEven(image))
+            {
+                return image.PixelHeight / 2;
+            }
+
+            return (image.PixelHeight - 1) / 2;
+        }
+
+        private bool imageHeightIsEven(BitmapImage image)
+        {
+            var heightIsEven = image.PixelHeight % 2 == 0;
+            return heightIsEven;
         }
 
         /// <summary>
@@ -208,45 +263,6 @@ namespace GroupNStegafy.Controller
         public bool SourceImageLoaded()
         {
             return this.sourceImageFile != null;
-        }
-
-        private byte[] swapQuadrants(byte[] messageBytes, uint messageWidth, uint messageHeight)
-        {
-            byte[] swappedBytes;
-            var halfHeight = messageHeight / 2;
-            for (var i = (int)halfHeight; i < messageHeight; i++)
-            {
-                for (var j = 0; j < messageWidth; j++)
-                {
-                    var messagePixelColor = PixelColorInfo.GetPixelBgra8(messageBytes, i, j, messageWidth);
-                    if (isBlackPixel(messagePixelColor))
-                    {
-                        sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
-                        
-                    }
-                    else if (isWhitePixel(messagePixelColor))
-                    {
-                        sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
-                    }
-                }
-            }
-
-            return messageBytes;
-        }
-
-        //TODO this is violating DRY, but using to test
-        private static bool isWhitePixel(Color messagePixelColor)
-        {
-            return messagePixelColor.R == 255
-                   && messagePixelColor.B == 255
-                   && messagePixelColor.G == 255;
-        }
-
-        private static bool isBlackPixel(Color messagePixelColor)
-        {
-            return messagePixelColor.R == 0
-                   && messagePixelColor.B == 0
-                   && messagePixelColor.G == 0;
         }
 
         private async Task setSourceImageSizeValues()
