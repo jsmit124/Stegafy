@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
@@ -182,52 +184,25 @@ namespace GroupNStegafy.Controller
             }
             else
             {
+                var messageDecoder =
+                    await BitmapDecoder.CreateAsync(await this.messageFile.OpenAsync(FileAccessMode.Read));
+                var messagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.messageFile);
+                var messageImageWidth = messageDecoder.PixelWidth;
+                var messageImageHeight = messageDecoder.PixelHeight;
+
                 if (encryptionSelected)
                 {
-                    //var topLeft = new BitmapImage();
-                    //var topRight = new BitmapImage();
-                    //var bottomLeft = new BitmapImage();
-                    //var bottomRight = new BitmapImage();
+                    var halfMessageLength = messagePixels.Length / 2;
+                    var bottomHalf = messagePixels.Skip(halfMessageLength);
+                    var topHalf = new byte[halfMessageLength];
+                    Array.Copy(messagePixels, 0, topHalf, 0, halfMessageLength);
 
-                    var hasMiddle = false;
-                    var halfMessageHeight = this.MessageImage.PixelHeight;
-
-                    var topHalf = new RectangleF(0, 0, this.MessageImage.PixelWidth, halfMessageHeight);
-                    var middleHalf = new RectangleF();
-                    var bottomHalf = new RectangleF();
-
-                    if (this.imageHeightIsEven(this.MessageImage))
-                    {
-                        bottomHalf = new RectangleF(0, halfMessageHeight, this.MessageImage.PixelWidth, this.MessageImage.PixelHeight);
-                    }
-                    else
-                    {
-                        bottomHalf = new RectangleF(0, halfMessageHeight + 2, this.MessageImage.PixelWidth, this.MessageImage.PixelHeight);
-                        hasMiddle = true;
-                    }
-
-                    var topMessage = new BitmapImage();
-                    var bottomMessage = new BitmapImage();
-
-                    if (hasMiddle)
-                    {
-                        middleHalf = new RectangleF(0, halfMessageHeight + 1, this.MessageImage.PixelWidth, halfMessageHeight + 1);
-                        var middleMessage = new BitmapImage();
-                    }
+                    var swappedImage = bottomHalf.Union(topHalf);
+                    messagePixels = (byte[]) swappedImage;
                 }
-                else
-                {
 
-                    var messageDecoder =
-                        await BitmapDecoder.CreateAsync(await this.messageFile.OpenAsync(FileAccessMode.Read));
-                    var messagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.messageFile);
-                    var messageImageWidth = messageDecoder.PixelWidth;
-                    var messageImageHeight = messageDecoder.PixelHeight;
-
-                    await this.messageEmbedder.EmbedMessageInImage(messagePixels, messageImageWidth, messageImageHeight,
-                        this.sourceImageWidth, this.sourceImageHeight, encryptionSelected, bpcc);
-
-                }
+                await this.messageEmbedder.EmbedMessageInImage(messagePixels, messageImageWidth, messageImageHeight,
+                    this.sourceImageWidth, this.sourceImageHeight, encryptionSelected, bpcc);
             }
         }
 
