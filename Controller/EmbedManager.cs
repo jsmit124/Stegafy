@@ -5,25 +5,23 @@ using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
-using GroupNStegafy.Cryptography;
 using GroupNStegafy.Formatter;
 using GroupNStegafy.IO;
 using GroupNStegafy.Model;
 using GroupNStegafy.Utility;
-using GroupNStegafy.View;
 
 namespace GroupNStegafy.Controller
 {
     /// <summary>
     ///     Stores information for the StegafyManager class
     /// </summary>
-    public class StegafyManager
+    public class EmbedManager
     {
         #region Data members
 
         private readonly FileWriter fileWriter;
         private readonly FileReader fileReader;
-        private Embedder messageEmbedder;
+        private MessageEmbedder messageEmbedder;
         private StorageFile sourceImageFile;
         private StorageFile messageFile;
         private double dpiX;
@@ -76,9 +74,9 @@ namespace GroupNStegafy.Controller
         #region Constructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="StegafyManager" /> class.
+        ///     Initializes a new instance of the <see cref="EmbedManager" /> class.
         /// </summary>
-        public StegafyManager()
+        public EmbedManager()
         {
             this.fileReader = new FileReader();
             this.fileWriter = new FileWriter();
@@ -162,11 +160,11 @@ namespace GroupNStegafy.Controller
                 string formattedText;
                 if (encryptionSelected)
                 {
-                    formattedText = this.formatEncryptedTextForEmbedding(encryptionKey, this.TextFromFile);
+                    formattedText = EmbedTextFormatter.FormatEncryptedTextForEmbedding(encryptionKey, this.TextFromFile);
                 }
                 else
                 {
-                    formattedText = this.formatTextForEmbedding(this.TextFromFile);
+                    formattedText = EmbedTextFormatter.FormatTextForEmbedding(this.TextFromFile);
                 }
 
                 var binaryText = BinaryStringConverter.ConvertStringToBinary(formattedText);
@@ -216,19 +214,6 @@ namespace GroupNStegafy.Controller
                 this.sourceImageHeight = decoder.PixelHeight;
                 this.sourceImageWidth = decoder.PixelWidth;
             }
-        }
-
-        private string formatTextForEmbedding(string text)
-        {
-            return EmbeddingStringFormatter.FormatForEmbedding(text) + TextMessageConstants.EndOfTextFileIndication;
-        }
-
-        private string formatEncryptedTextForEmbedding(string password, string text)
-        {
-            text = EmbeddingStringFormatter.FormatForEmbedding(text);
-
-            return password + TextMessageConstants.EndOfEncryptionKeyIndication +
-                   TextCryptography.Encrypt(password, text) + TextMessageConstants.EndOfTextFileIndication;
         }
 
         #endregion

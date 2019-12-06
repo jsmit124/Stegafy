@@ -7,7 +7,7 @@ namespace GroupNStegafy.Model
     /// <summary>
     ///     Stores information for the abstract Embedder class
     /// </summary>
-    public abstract class Embedder
+    public abstract class MessageEmbedder
     {
         #region Properties
 
@@ -36,9 +36,9 @@ namespace GroupNStegafy.Model
         #region Constructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Embedder" /> class
+        ///     Initializes a new instance of the <see cref="MessageEmbedder" /> class
         /// </summary>
-        protected Embedder()
+        protected MessageEmbedder()
         {
             this.MessageTooLarge = false;
             this.SourceImagePixels = null;

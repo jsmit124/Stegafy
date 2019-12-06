@@ -121,17 +121,21 @@
     </Compile>
     <Compile Include="Constants\TextMessageConstants.cs" />
     <Compile Include="Constants\FileTypeConstants.cs" />
-    <Compile Include="Controller\StegafyManager.cs" />
+    <Compile Include="Controller\EmbedManager.cs" />
+    <Compile Include="Controller\ExtractManager.cs" />
     <Compile Include="Converter\BinaryDecimalConverter.cs" />
     <Compile Include="Converter\BinaryStringConverter.cs" />
     <Compile Include="Converter\FileBitmapConverter.cs" />
     <Compile Include="Enumerables\FileTypes.cs" />
     <Compile Include="Formatter\EmbeddingStringFormatter.cs" />
+    <Compile Include="Formatter\EmbedTextFormatter.cs" />
     <Compile Include="IO\FileReader.cs" />
     <Compile Include="IO\FileWriter.cs" />
     <Compile Include="Formatter\HeaderPixelFormatter.cs" />
-    <Compile Include="Model\Embedder.cs" />
+    <Compile Include="Model\MessageEmbedder.cs" />
+    <Compile Include="Model\MessageExtracter.cs" />
     <Compile Include="Model\MonochromeImageEmbedder.cs" />
+    <Compile Include="Model\MonochromeImageExtracter.cs" />
     <Compile Include="Model\TextMessageEmbedder.cs" />
     <Compile Include="Cryptography\TextCryptography.cs" />
     <Compile Include="Utility\PixelExtracter.cs" />

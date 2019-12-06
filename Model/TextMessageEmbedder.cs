@@ -13,8 +13,8 @@ namespace GroupNStegafy.Model
     /// <summary>
     ///     Stores information for the TextMessageEmbedder class
     /// </summary>
-    /// <seealso cref="GroupNStegafy.Model.Embedder" />
-    public class TextMessageEmbedder : Embedder
+    /// <seealso cref="GroupNStegafy.Model.MessageEmbedder" />
+    public class TextMessageEmbedder : MessageEmbedder
     {
         #region Methods
 

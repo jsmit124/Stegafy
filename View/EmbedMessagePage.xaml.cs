@@ -18,7 +18,7 @@ namespace GroupNStegafy.View
         private readonly double applicationHeight = (double) Application.Current.Resources["AppHeight"];
         private readonly double applicationWidth = (double) Application.Current.Resources["AppWidth"];
 
-        private readonly StegafyManager stegafyManager;
+        private readonly EmbedManager embedManager;
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace GroupNStegafy.View
             ApplicationView.GetForCurrentView()
                            .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
 
-            this.stegafyManager = new StegafyManager();
+            this.embedManager = new EmbedManager();
         }
 
         #endregion
@@ -48,14 +48,14 @@ namespace GroupNStegafy.View
         {
             this.progressRing.IsActive = true;
 
-            await this.stegafyManager.LoadSourceImage();
-            if (!this.stegafyManager.SourceImageLoaded())
+            await this.embedManager.LoadSourceImage();
+            if (!this.embedManager.SourceImageLoaded())
             {
                 this.progressRing.IsActive = false;
                 return;
             }
 
-            this.sourceImageDisplay.Source = this.stegafyManager.SourceImage;
+            this.sourceImageDisplay.Source = this.embedManager.SourceImage;
 
             this.checkIfSourceLoadedToEnableSettings();
             this.progressRing.IsActive = false;
@@ -66,23 +66,23 @@ namespace GroupNStegafy.View
             this.progressRing.IsActive = true;
             this.hideMessageDisplays();
 
-            await this.stegafyManager.LoadMessage();
+            await this.embedManager.LoadMessage();
 
-            if (!this.stegafyManager.MessageLoaded())
+            if (!this.embedManager.MessageLoaded())
             {
                 this.progressRing.IsActive = false;
                 return;
             }
 
-            if (this.stegafyManager.MessageFileType == FileTypeConstants.TextFileType)
+            if (this.embedManager.MessageFileType == FileTypeConstants.TextFileType)
             {
-                this.textFileDisplay.Text = this.stegafyManager.TextFromFile;
+                this.textFileDisplay.Text = this.embedManager.TextFromFile;
                 this.textFileDisplay.Visibility = Visibility.Visible;
                 this.textFileScroller.Visibility = Visibility.Visible;
             }
             else
             {
-                this.monochromeImageDisplay.Source = this.stegafyManager.MessageImage;
+                this.monochromeImageDisplay.Source = this.embedManager.MessageImage;
                 this.monochromeImageDisplay.Visibility = Visibility.Visible;
             }
 
@@ -106,15 +106,15 @@ namespace GroupNStegafy.View
                 return;
             }
 
-            await this.stegafyManager.EmbedMessage(encryptionIsChecked, bpcc, encryptionKey);
+            await this.embedManager.EmbedMessage(encryptionIsChecked, bpcc, encryptionKey);
 
-            if (this.stegafyManager.MessageTooLarge)
+            if (this.embedManager.MessageTooLarge)
             {
                 this.progressRing.IsActive = false;
                 return;
             }
 
-            this.embeddedImageDisplay.Source = this.stegafyManager.EmbeddedImage;
+            this.embeddedImageDisplay.Source = this.embedManager.EmbeddedImage;
             this.saveButton.IsEnabled = true;
             this.progressRing.IsActive = false;
         }
@@ -127,12 +127,12 @@ namespace GroupNStegafy.View
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.stegafyManager.SaveEmbeddedImage();
+            this.embedManager.SaveEmbeddedImage();
         }
 
         private void checkIfSourceLoadedToEnableSettings()
         {
-            if (this.stegafyManager.SourceImageLoaded())
+            if (this.embedManager.SourceImageLoaded())
             {
                 this.enableSettingsOptions();
             }
@@ -140,7 +140,7 @@ namespace GroupNStegafy.View
 
         private void checkIfMessageLoadedToEnableLoadSourceButton()
         {
-            if (this.stegafyManager.MessageLoaded())
+            if (this.embedManager.MessageLoaded())
             {
                 this.loadSourceButton.IsEnabled = true;
             }
