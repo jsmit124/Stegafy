@@ -83,7 +83,7 @@ namespace GroupNStegafy.View
                 await BitmapDecoder.CreateAsync(await this.embeddedImageFile.OpenAsync(FileAccessMode.Read));
             var embeddedPixels = await PixelExtracter.ExtractPixelDataFromFile(this.embeddedImageFile);
 
-            await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
+            //await this.extractMessageFromImage(embeddedPixels, embeddedDecoder.PixelWidth, embeddedDecoder.PixelHeight);
 
             this.extractedImage =
                 new WriteableBitmap((int) embeddedDecoder.PixelWidth, (int) embeddedDecoder.PixelHeight);

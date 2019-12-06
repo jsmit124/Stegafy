@@ -34,10 +34,10 @@ namespace GroupNStegafy.Controller
             this.fileWriter.SaveWritableBitmap(extractedImage, dpiX, dpiY);
         }
 
-        public void ExtractMessage()
-        {
-            this.messageExtracter.ExtractMessageFromImage(//TODO);
-        }
+        //public void ExtractMessage()
+        //{
+        //    this.messageExtracter.ExtractMessageFromImage(//TODO);
+        //}
 
         public async Task LoadEmbeddedImage()
         {
