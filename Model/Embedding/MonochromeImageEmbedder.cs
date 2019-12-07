@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Windows.UI;
 using GroupNStegafy.Enumerables;
 using GroupNStegafy.Formatter;
@@ -33,6 +37,24 @@ namespace GroupNStegafy.Model.Embedding
                 await Dialogs.ShowMessageFileTooLargeDialog();
                 MessageTooLarge = true;
                 return;
+            }
+
+
+            if (encryptionIsChecked)
+            {
+                var halfMessageLength = messagePixels.Length / 2;
+                var topHalf = new byte[halfMessageLength];
+                Array.Copy(messagePixels, 0, topHalf, 0, halfMessageLength);
+                var bottomHalf = new byte[halfMessageLength];
+                Array.Copy(messagePixels, halfMessageLength, bottomHalf, 0, halfMessageLength);
+
+                var swappedArrays = new List<byte>();
+                swappedArrays.AddRange(bottomHalf);
+                swappedArrays.AddRange(topHalf);
+
+                var swappedBytes = swappedArrays.ToArray();
+
+                messagePixels = swappedBytes;
             }
 
             for (var currY = 0; currY < sourceImageHeight; currY++)
