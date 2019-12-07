@@ -42,19 +42,7 @@ namespace GroupNStegafy.Model.Embedding
 
             if (encryptionIsChecked)
             {
-                var halfMessageLength = messagePixels.Length / 2;
-                var topHalf = new byte[halfMessageLength];
-                Array.Copy(messagePixels, 0, topHalf, 0, halfMessageLength);
-                var bottomHalf = new byte[halfMessageLength];
-                Array.Copy(messagePixels, halfMessageLength, bottomHalf, 0, halfMessageLength);
-
-                var swappedArrays = new List<byte>();
-                swappedArrays.AddRange(bottomHalf);
-                swappedArrays.AddRange(topHalf);
-
-                var swappedBytes = swappedArrays.ToArray();
-
-                messagePixels = swappedBytes;
+                messagePixels = swapMessagePixelQuadrants(messagePixels);
             }
 
             for (var currY = 0; currY < sourceImageHeight; currY++)
@@ -84,6 +72,31 @@ namespace GroupNStegafy.Model.Embedding
             }
 
             await SetEmbeddedImage(sourceImageHeight, sourceImageWidth);
+        }
+
+        private static byte[] swapMessagePixelQuadrants(byte[] messagePixels)
+        {
+            const int splitByFour = 4;
+            var splitMessageLength = messagePixels.Length / splitByFour;
+            var topLeft = new byte[splitMessageLength];
+            Array.Copy(messagePixels, 0, topLeft, 0, splitMessageLength);
+            var topRight = new byte[splitMessageLength];
+            Array.Copy(messagePixels, splitMessageLength, topRight, 0, splitMessageLength);
+            var bottomLeft = new byte[splitMessageLength];
+            Array.Copy(messagePixels, splitMessageLength*2, bottomLeft, 0, splitMessageLength);
+            var bottomRight = new byte[splitMessageLength];
+            Array.Copy(messagePixels, splitMessageLength*3, bottomRight, 0, splitMessageLength);
+
+            var swappedArrays = new List<byte>();
+            swappedArrays.AddRange(bottomLeft);
+            swappedArrays.AddRange(bottomRight);
+            swappedArrays.AddRange(topLeft);
+            swappedArrays.AddRange(topRight);
+
+            var swappedBytes = swappedArrays.ToArray();
+
+            messagePixels = swappedBytes;
+            return messagePixels;
         }
 
         private Color embedMonochromeImage(int currX, uint messageImageWidth, int currY, uint messageImageHeight,
