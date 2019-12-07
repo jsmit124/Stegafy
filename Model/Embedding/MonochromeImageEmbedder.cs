@@ -76,22 +76,15 @@ namespace GroupNStegafy.Model.Embedding
 
         private static byte[] swapMessagePixelQuadrants(byte[] messagePixels)
         {
-            const int splitByFour = 4;
-            var splitMessageLength = messagePixels.Length / splitByFour;
+            var splitMessageLength = messagePixels.Length / 2;
             var topLeft = new byte[splitMessageLength];
             Array.Copy(messagePixels, 0, topLeft, 0, splitMessageLength);
             var topRight = new byte[splitMessageLength];
             Array.Copy(messagePixels, splitMessageLength, topRight, 0, splitMessageLength);
-            var bottomLeft = new byte[splitMessageLength];
-            Array.Copy(messagePixels, splitMessageLength*2, bottomLeft, 0, splitMessageLength);
-            var bottomRight = new byte[splitMessageLength];
-            Array.Copy(messagePixels, splitMessageLength*3, bottomRight, 0, splitMessageLength);
 
             var swappedArrays = new List<byte>();
-            swappedArrays.AddRange(bottomLeft);
-            swappedArrays.AddRange(bottomRight);
-            swappedArrays.AddRange(topLeft);
             swappedArrays.AddRange(topRight);
+            swappedArrays.AddRange(topLeft);
 
             var swappedBytes = swappedArrays.ToArray();
 
