@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Windows.UI;
 using GroupNStegafy.Enumerables;
 using GroupNStegafy.Formatter;
@@ -17,6 +13,12 @@ namespace GroupNStegafy.Model.Embedding
     /// <seealso cref="MessageEmbedder" />
     public class MonochromeImageEmbedder : MessageEmbedder
     {
+        #region Data members
+
+        private bool isEncrypted;
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -32,17 +34,13 @@ namespace GroupNStegafy.Model.Embedding
         public override async Task EmbedMessageInImage(byte[] messagePixels, uint messageImageWidth,
             uint messageImageHeight, uint sourceImageWidth, uint sourceImageHeight, bool encryptionIsChecked, int bpcc)
         {
+            this.isEncrypted = encryptionIsChecked;
+
             if (messageImageWidth > sourceImageWidth || messageImageHeight > sourceImageHeight)
             {
                 await Dialogs.ShowMessageFileTooLargeDialog();
                 MessageTooLarge = true;
                 return;
-            }
-
-
-            if (encryptionIsChecked)
-            {
-                messagePixels = swapMessagePixelQuadrants(messagePixels);
             }
 
             for (var currY = 0; currY < sourceImageHeight; currY++)
@@ -74,29 +72,16 @@ namespace GroupNStegafy.Model.Embedding
             await SetEmbeddedImage(sourceImageHeight, sourceImageWidth);
         }
 
-        private static byte[] swapMessagePixelQuadrants(byte[] messagePixels)
-        {
-            var splitMessageLength = messagePixels.Length / 2;
-            var topLeft = new byte[splitMessageLength];
-            Array.Copy(messagePixels, 0, topLeft, 0, splitMessageLength);
-            var topRight = new byte[splitMessageLength];
-            Array.Copy(messagePixels, splitMessageLength, topRight, 0, splitMessageLength);
-
-            var swappedArrays = new List<byte>();
-            swappedArrays.AddRange(topRight);
-            swappedArrays.AddRange(topLeft);
-
-            var swappedBytes = swappedArrays.ToArray();
-
-            messagePixels = swappedBytes;
-            return messagePixels;
-        }
-
         private Color embedMonochromeImage(int currX, uint messageImageWidth, int currY, uint messageImageHeight,
             byte[] messagePixels, Color sourcePixelColor)
         {
             if (currX < messageImageWidth && currY < messageImageHeight)
             {
+                if (this.isEncrypted)
+                {
+                    currY = swapYQuadrant(currY, messageImageHeight);
+                }
+
                 var messagePixelColor = PixelColorInfo.GetPixelBgra8(messagePixels, currY,
                     currX, messageImageWidth);
 
@@ -111,6 +96,21 @@ namespace GroupNStegafy.Model.Embedding
             }
 
             return sourcePixelColor;
+        }
+
+        private static int swapYQuadrant(int currY, uint messageImageHeight)
+        {
+            var halfMessageHeight = (int) messageImageHeight / 2;
+            if (currY >= halfMessageHeight)
+            {
+                currY -= halfMessageHeight;
+            }
+            else if (currY < halfMessageHeight)
+            {
+                currY += halfMessageHeight;
+            }
+
+            return currY;
         }
 
         private static bool isWhitePixel(Color messagePixelColor)
