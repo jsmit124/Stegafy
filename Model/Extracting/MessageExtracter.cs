@@ -7,7 +7,9 @@ namespace GroupNStegafy.Model.Extracting
     {
         public byte[] EmbeddedPixels;
         public WriteableBitmap ExtractedImage { get; protected set; }
-        public string ExtractedText { get; private set; }
+        public WriteableBitmap DecryptedImage { get; protected set; }
+        public string ExtractedText { get; protected set; }
+        public string DecryptedText { get; protected set; }
         public bool EncryptionUsed;
 
         public abstract Task ExtractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth, uint embeddedImageHeight);

@@ -67,7 +67,7 @@ namespace GroupNStegafy.View
             {
                 if (this.extractManager.EncryptionUsed)
                 {
-                    //TODO handle decrypting image
+                    //TODO handle displaying decrypted image
                 }
                 this.decryptedImageDisplay.Source = this.extractManager.ExtractedImage;
                 this.saveDecryptedMessageButton.IsEnabled = true;
@@ -76,7 +76,7 @@ namespace GroupNStegafy.View
             {
                 if (this.extractManager.EncryptionUsed)
                 {
-                    //TODO handle decrypting text
+                    //TODO handle displaying decrypted text
                 }
                 //TODO handle displaying text
             }

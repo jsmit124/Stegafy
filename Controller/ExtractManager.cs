@@ -25,7 +25,9 @@ namespace GroupNStegafy.Controller
 
         public BitmapImage EmbeddedImage { get; private set; }
         public WriteableBitmap ExtractedImage => this.messageExtracter.ExtractedImage;
+        public WriteableBitmap DecryptedImage => this.messageExtracter.DecryptedImage;
         public string ExtractedText => this.messageExtracter.ExtractedText;
+        public string DecryptedText => this.messageExtracter.DecryptedText;
         public bool EncryptionUsed => this.messageExtracter.EncryptionUsed;
 
 

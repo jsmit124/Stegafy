@@ -11,8 +11,7 @@ namespace GroupNStegafy.Utility
     {
         public static FileTypes DetermineFileTypeToExtract(byte[] pixelInformation, uint imageWidth)
         {
-            var pixelColor = PixelColorInfo.GetPixelBgra8(pixelInformation, 1, 0, imageWidth);
-            var lastBlueBit = pixelColor.B << 7;
+            var pixelColor = PixelColorInfo.GetPixelBgra8(pixelInformation, 0, 1, imageWidth);
 
             if ((pixelColor.B & 1) != 0)
             {
