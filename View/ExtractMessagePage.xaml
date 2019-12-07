@@ -40,7 +40,7 @@
                 <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
 
                 <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0"/>
-                <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0"/>
+                <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap"/>
 
                 <Image x:Name="decryptedImageDisplay" Grid.Row="2" Grid.Column="1"/>
                 <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>

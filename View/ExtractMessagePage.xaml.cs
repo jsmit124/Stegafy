@@ -76,9 +76,10 @@ namespace GroupNStegafy.View
             {
                 if (this.extractManager.EncryptionUsed)
                 {
-                    //TODO handle displaying decrypted text
+                    this.decryptedMessageTextBlock.Text = this.extractManager.DecryptedText;
                 }
-                //TODO handle displaying text
+
+                this.encryptedMessageTextBlock.Text = this.extractManager.ExtractedText;
             }
         }
 

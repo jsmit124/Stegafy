@@ -10,7 +10,7 @@
         /// <summary>
         ///     The end of text file indication
         /// </summary>
-        public static string EndOfTextFileIndication = "#.-.-. -#";
+        public static string EndOfTextFileIndication = "#.-.-.-#";
 
         /// <summary>
         ///     The end of encryption key indication

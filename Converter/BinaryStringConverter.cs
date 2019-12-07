@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections;
+using System.Text;
 
 namespace GroupNStegafy.Converter
 {
@@ -27,6 +29,23 @@ namespace GroupNStegafy.Converter
         public static string ConvertBinaryToString(byte[] stringBytes)
         {
             return Encoding.ASCII.GetString(stringBytes);
+        }
+
+        public static string BitArrayToStr(BitArray ba)
+        {
+            byte[] strArr = new byte[ba.Length / 8];
+
+            ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+
+            for (int i = 0; i < ba.Length / 8; i++)
+            {
+                for (int index = i * 8, m = 1; index < i * 8 + 8; index++, m *= 2)
+                {
+                    strArr[i] += ba.Get(index) ? (byte)m : (byte)0;
+                }
+            }
+
+            return encoding.GetString(strArr);
         }
 
         #endregion
