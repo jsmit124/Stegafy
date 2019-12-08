@@ -47,6 +47,12 @@ namespace GroupNStegafy.Controller
         public WriteableBitmap ExtractedImage => this.messageExtracter.ExtractedImage;
 
         /// <summary>
+        ///     Gets the encryption key.
+        /// </summary>
+        /// <value>The encryption key.</value>
+        public string EncryptionKey => this.messageExtracter.EncryptionKey;
+
+        /// <summary>
         ///     Gets the decrypted image.
         /// </summary>
         /// <value>The decrypted image.</value>

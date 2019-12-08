@@ -43,6 +43,12 @@ namespace GroupNStegafy.Model.Extracting
         /// <value>The decrypted text.</value>
         public string DecryptedText { get; protected set; }
 
+        /// <summary>
+        ///     Gets or sets the encryption key.
+        /// </summary>
+        /// <value>The encryption key.</value>
+        public string EncryptionKey { get; protected set; }
+
         #endregion
 
         #region Methods

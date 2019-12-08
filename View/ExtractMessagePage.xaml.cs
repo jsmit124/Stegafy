@@ -79,6 +79,7 @@ namespace GroupNStegafy.View
                 if (this.extractManager.EncryptionUsed)
                 {
                     this.decryptedMessageTextBlock.Text = this.extractManager.DecryptedText;
+                    this.encryptionKeyWordTextBlock.Text = this.extractManager.EncryptionKey;
                 }
 
                 this.encryptedMessageTextBlock.Text = this.extractManager.ExtractedText;

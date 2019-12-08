@@ -22,8 +22,10 @@ namespace GroupNStegafy.Model.Extracting
         private BitArray embeddedBits;
         private readonly StringBuilder peek;
         private readonly StringBuilder embeddedMessage;
+        private readonly StringBuilder encryptionKey;
         private bool endOfMessageReached;
         private readonly int numberOfBitsInByte = 8;
+        private bool endOfEncryptionKeyReached;
 
         #endregion
 
@@ -36,7 +38,9 @@ namespace GroupNStegafy.Model.Extracting
         {
             this.peek = new StringBuilder(this.numberOfBitsInByte);
             this.embeddedMessage = new StringBuilder(this.numberOfBitsInByte);
+            this.encryptionKey = new StringBuilder();
             this.endOfMessageReached = false;
+            this.endOfEncryptionKeyReached = false;
         }
 
         #endregion
@@ -79,6 +83,7 @@ namespace GroupNStegafy.Model.Extracting
                     if (isSecondPixel(currY, currX))
                     {
                         EncryptionUsed = (embeddedPixelColor.R & 1) != 0;
+                        this.endOfEncryptionKeyReached = !EncryptionUsed;
                         this.bpcc = BinaryDecimalConverter.CalculateBpccFromBinary(embeddedPixelColor.G);
 
                         var numberOfBits = (embeddedImageWidth * embeddedImageHeight - 2) *
@@ -148,15 +153,27 @@ namespace GroupNStegafy.Model.Extracting
 
             var extractedLetter = BinaryStringConverter.BitArrayToString(peekBits);
 
-            if (this.peek.Length == this.numberOfBitsInByte)
+            if (this.peek.Length == this.numberOfBitsInByte && this.endOfEncryptionKeyReached)
             {
                 this.embeddedMessage.Append(this.peek.ToString().Substring(0, 1));
+                this.peek.Remove(0, 1);
+            }
+            else if (this.peek.Length == this.numberOfBitsInByte)
+            {
+                this.encryptionKey.Append(this.peek.ToString().Substring(0, 1));
                 this.peek.Remove(0, 1);
             }
 
             this.peek.Append(extractedLetter);
 
-            this.checkForEndOfMessage();
+            if (this.endOfEncryptionKeyReached)
+            {
+                this.checkForEndOfMessage();
+            }
+            else
+            {
+                this.checkForEndOfEncryptionKey();
+            }
         }
 
         private void checkForEndOfMessage()
@@ -164,6 +181,17 @@ namespace GroupNStegafy.Model.Extracting
             if (this.peek.ToString().Equals(TextMessageConstants.EndOfTextFileIndication))
             {
                 this.endOfMessageReached = true;
+            }
+        }
+
+        private void checkForEndOfEncryptionKey()
+        {
+            if (this.peek.ToString().Substring(3).Equals(TextMessageConstants.EndOfEncryptionKeyIndication))
+            {
+                this.encryptionKey.Append(this.peek.ToString().Substring(0, 3));
+                this.peek.Remove(0, 3);
+                this.endOfMessageReached = true;
+                this.EncryptionKey = this.encryptionKey.ToString();
             }
         }
 
