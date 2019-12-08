@@ -89,11 +89,11 @@ namespace GroupNStegafy.Model.Embedding
 
                 if (isBlackPixel(messagePixelColor))
                 {
-                    sourcePixelColor.B &= 0xfe; //set LSB blue source pixel to 0
+                    sourcePixelColor.B &= 0xfe;
                 }
                 else if (isWhitePixel(messagePixelColor))
                 {
-                    sourcePixelColor.B |= 1; //set LSB blue source pixel to 1
+                    sourcePixelColor.B |= 1;
                 }
             }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
@@ -24,6 +23,7 @@ namespace GroupNStegafy.Model.Extracting
         private readonly StringBuilder peek;
         private readonly StringBuilder embeddedMessage;
         private bool endOfMessageReached;
+        private readonly int numberOfBitsInByte = 8;
 
         #endregion
 
@@ -34,8 +34,8 @@ namespace GroupNStegafy.Model.Extracting
         /// </summary>
         public TextFileExtracter()
         {
-            this.peek = new StringBuilder(8);
-            this.embeddedMessage = new StringBuilder(8);
+            this.peek = new StringBuilder(this.numberOfBitsInByte);
+            this.embeddedMessage = new StringBuilder(this.numberOfBitsInByte);
             this.endOfMessageReached = false;
         }
 
@@ -81,7 +81,8 @@ namespace GroupNStegafy.Model.Extracting
                         EncryptionUsed = (embeddedPixelColor.R & 1) != 0;
                         this.bpcc = BinaryDecimalConverter.CalculateBpccFromBinary(embeddedPixelColor.G);
 
-                        var numberOfBits = (embeddedImageWidth * embeddedImageHeight - 2) * 3 * this.bpcc;
+                        var numberOfBits = (embeddedImageWidth * embeddedImageHeight - 2) *
+                                           PixelConstants.NumberOfColorChannels * this.bpcc;
                         this.embeddedBits = new BitArray((int) numberOfBits);
                     }
                     else
@@ -93,7 +94,7 @@ namespace GroupNStegafy.Model.Extracting
                         }
 
                         this.extractMessageBitsFromPixel(embeddedPixelColor, count);
-                        count += 3 * this.bpcc;
+                        count += PixelConstants.NumberOfColorChannels * this.bpcc;
                     }
                 }
             }
@@ -112,23 +113,13 @@ namespace GroupNStegafy.Model.Extracting
 
         private void extractMessageBitsFromPixel(Color embeddedPixelColor, int count)
         {
-            foreach (var i in Enumerable.Range(0, 3))
-            {
-                byte color;
-                if (i == 0)
-                {
-                    color = embeddedPixelColor.R;
-                }
-                else if (i == 1)
-                {
-                    color = embeddedPixelColor.G;
-                }
-                else
-                {
-                    color = embeddedPixelColor.B;
-                }
+            var colorInfo = ColorByteArrayConverter.GetByteArray(embeddedPixelColor);
 
-                var colorByte = new[] {color};
+            foreach (var color in colorInfo)
+            {
+                var currColor = color;
+
+                var colorByte = new[] {currColor};
                 var colorBits = new BitArray(colorByte);
 
                 for (var j = 0; j < this.bpcc; j++)
@@ -148,7 +139,7 @@ namespace GroupNStegafy.Model.Extracting
             }
 
             var currIndex = 0;
-            var peekBits = new BitArray(8);
+            var peekBits = new BitArray(this.numberOfBitsInByte);
             for (var k = count; k >= count - 7; k--)
             {
                 peekBits.Set(currIndex, this.embeddedBits.Get(k));
@@ -157,7 +148,7 @@ namespace GroupNStegafy.Model.Extracting
 
             var extractedLetter = BinaryStringConverter.BitArrayToString(peekBits);
 
-            if (this.peek.Length == 8)
+            if (this.peek.Length == this.numberOfBitsInByte)
             {
                 this.embeddedMessage.Append(this.peek.ToString().Substring(0, 1));
                 this.peek.Remove(0, 1);

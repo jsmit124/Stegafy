@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI;
+using GroupNStegafy.Constants;
+using GroupNStegafy.Converter;
 using GroupNStegafy.Enumerables;
 using GroupNStegafy.Formatter;
 using GroupNStegafy.Utility;
@@ -19,6 +20,7 @@ namespace GroupNStegafy.Model.Embedding
         #region Data members
 
         private int currentByteIndex;
+        private int numberOfBitsInByte = 8;
 
         #endregion
 
@@ -36,19 +38,19 @@ namespace GroupNStegafy.Model.Embedding
         /// <param name="sourceImageHeight">Height of the source image.</param>
         /// <param name="encryptionIsChecked">if set to <c>true</c> [encryption is selected].</param>
         /// <param name="bpcc">The BPCC.</param>
-        /// <returns></returns>
+        /// <returns>Task</returns>
         /// <exception cref="NotImplementedException"></exception>
         public override async Task EmbedMessageInImage(byte[] messageData, uint messageLength, uint messageImageHeight,
             uint sourceImageWidth, uint sourceImageHeight, bool encryptionIsChecked, int bpcc)
         {
             var totalAvailableSourcePixels = sourceImageWidth * sourceImageHeight - 2;
             this.currentByteIndex = 0;
-            var numberOfBits = messageData.Length * 8;
+            var numberOfBits = messageData.Length * this.numberOfBitsInByte;
 
-            if (numberOfBits / bpcc > totalAvailableSourcePixels * 3)
+            if (numberOfBits / bpcc > totalAvailableSourcePixels * PixelConstants.NumberOfColorChannels)
             {
                 var requiredBpcc = this.calculateBpccRequiredToEmbedText(numberOfBits, totalAvailableSourcePixels);
-                if (requiredBpcc > 8)
+                if (requiredBpcc > this.numberOfBitsInByte)
                 {
                     await Dialogs.ShowNotPossibleToEmbedTextDialog();
                 }
@@ -82,7 +84,7 @@ namespace GroupNStegafy.Model.Embedding
                     else
                     {
                         sourcePixelColor = this.embedTextMessage(messageData, sourcePixelColor, currentIndex, bpcc);
-                        currentIndex += 3 * bpcc;
+                        currentIndex += PixelConstants.NumberOfColorChannels * bpcc;
                     }
 
                     PixelColorInfo.SetPixelBgra8(SourceImagePixels, currY, currX, sourcePixelColor, sourceImageWidth);
@@ -94,78 +96,54 @@ namespace GroupNStegafy.Model.Embedding
 
         private Color embedTextMessage(byte[] messageData, Color sourcePixelColor, int currentIndex, int bpcc)
         {
-            foreach (var i in Enumerable.Range(0, 3))
+            var pixelInfo = ColorByteArrayConverter.GetByteArray(sourcePixelColor);
+            var count = 0;
+            var embeddedPixelInfo = new byte[PixelConstants.NumberOfColorChannels];
+
+            foreach (var colorInfo in pixelInfo)
             {
-                if (currentIndex < messageData.Length * 8) // can probably remove this if
+                var currColor = colorInfo;
+                currColor >>= bpcc;
+                currColor <<= bpcc;
+
+                var bitsToAdd = new BitArray(this.numberOfBitsInByte);
+                for (var j = 0; j < bpcc; j++)
                 {
-                    byte color;
+                    if (currentIndex + j < messageData.Length * this.numberOfBitsInByte)
+                    {
+                        var currentByte = messageData[this.currentByteIndex];
+                        var currentBit = isBitSet(currentByte, currentIndex % 8);
+                        bitsToAdd.Set(j, currentBit);
 
-                    if (i == 0)
-                    {
-                        color = sourcePixelColor.R;
-                    }
-                    else if (i == 1)
-                    {
-                        color = sourcePixelColor.G;
+                        if (currentIndex != 0 && (currentIndex + j) % this.numberOfBitsInByte == 0)
+                        {
+                            this.currentByteIndex++;
+                        }
                     }
                     else
                     {
-                        color = sourcePixelColor.B;
+                        bitsToAdd.Set(j, false);
                     }
-
-                    color >>= bpcc;
-                    color <<= bpcc;
-
-                    var bitsToAdd = new BitArray(8);
-                    for (var j = 0; j < bpcc; j++)
-                    {
-                        if (currentIndex + j < messageData.Length * 8)
-                        {
-                            var currentByte = messageData[this.currentByteIndex];
-                            var currentBit = isBitSet(currentByte, currentIndex % 8);
-                            bitsToAdd.Set(j, currentBit);
-
-                            if (currentIndex != 0 && (currentIndex + j) % 8 == 0)
-                            {
-                                this.currentByteIndex++;
-                            }
-                        }
-                        else
-                        {
-                            bitsToAdd.Set(j, false);
-                        }
-                    }
-
-                    var bitsAsByte = new byte[1]; //create empty byte
-                    bitsToAdd.CopyTo(bitsAsByte, 0); //set byte to specified number of bits
-
-                    color |= bitsAsByte[0];
-
-                    if (i == 0)
-                    {
-                        sourcePixelColor.R = color;
-                    }
-                    else if (i == 1)
-                    {
-                        sourcePixelColor.G = color;
-                    }
-                    else
-                    {
-                        sourcePixelColor.B = color;
-                    }
-
-                    currentIndex += bpcc;
                 }
+
+                var bitsAsByte = new byte[1];
+                bitsToAdd.CopyTo(bitsAsByte, 0);
+
+                currColor |= bitsAsByte[0];
+                embeddedPixelInfo[count] = currColor;
+
+                currentIndex += bpcc;
+                count++;
             }
 
-            return sourcePixelColor;
+            return Color.FromArgb(0, embeddedPixelInfo[0], embeddedPixelInfo[1], embeddedPixelInfo[2]);
         }
 
         private int calculateBpccRequiredToEmbedText(int bitCount, uint totalSourcePixels)
         {
             var requiredBpcc = 1;
 
-            for (var i = 1; bitCount / i > totalSourcePixels * 3; i++)
+            for (var i = 1; bitCount / i > totalSourcePixels * PixelConstants.NumberOfColorChannels; i++)
             {
                 requiredBpcc++;
             }
