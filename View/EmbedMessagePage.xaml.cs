@@ -11,7 +11,7 @@ namespace GroupNStegafy.View
     /// <summary>
     ///     The embedding page used for embedding images
     /// </summary>
-    public sealed partial class EmbedMessagePage : Page
+    public sealed partial class EmbedMessagePage
     {
         #region Data members
 
@@ -98,22 +98,25 @@ namespace GroupNStegafy.View
             var isChecked = this.encryptionSelectionCheckBox.IsChecked;
             var encryptionIsChecked = isChecked != null && isChecked.Value;
             var bpccSelection = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
-            var bpcc = int.Parse(bpccSelection.Content.ToString());
-            var encryptionKey = this.encryptionKeyTextBox.Text;
-            if (string.IsNullOrEmpty(encryptionKey))
+            if (bpccSelection?.Content != null)
             {
-                encryptionKey = "CS";
-            }
+                var bpcc = int.Parse(bpccSelection.Content.ToString());
+                var encryptionKey = this.encryptionKeyTextBox.Text;
+                if (string.IsNullOrEmpty(encryptionKey))
+                {
+                    encryptionKey = "CS";
+                }
 
-            if (encryptionIsChecked && encryptionKey.Equals(string.Empty) &&
-                this.embedManager.MessageFileType.Equals(FileTypeConstants.TextFileType))
-            {
-                await Dialogs.ShowNoEncryptionKeyInput();
-                this.progressRing.IsActive = false;
-                return;
-            }
+                if (encryptionIsChecked && encryptionKey.Equals(string.Empty) &&
+                    this.embedManager.MessageFileType.Equals(FileTypeConstants.TextFileType))
+                {
+                    await Dialogs.ShowNoEncryptionKeyInput();
+                    this.progressRing.IsActive = false;
+                    return;
+                }
 
-            await this.embedManager.EmbedMessage(encryptionIsChecked, bpcc, encryptionKey);
+                await this.embedManager.EmbedMessage(encryptionIsChecked, bpcc, encryptionKey);
+            }
 
             if (this.embedManager.MessageTooLarge)
             {

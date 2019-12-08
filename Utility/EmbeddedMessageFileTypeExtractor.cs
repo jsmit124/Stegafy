@@ -21,12 +21,7 @@ namespace GroupNStegafy.Utility
         {
             var pixelColor = PixelColorInfo.GetPixelBgra8(pixelInformation, 0, 1, imageWidth);
 
-            if ((pixelColor.B & 1) != 0)
-            {
-                return FileTypes.Text;
-            }
-
-            return FileTypes.Bitmap;
+            return (pixelColor.B & 1) != 0 ? FileTypes.Text : FileTypes.Bitmap;
         }
 
         #endregion
