@@ -191,7 +191,7 @@ namespace GroupNStegafy.Model.Extracting
                 this.encryptionKey.Append(this.peek.ToString().Substring(0, 3));
                 this.peek.Remove(0, 3);
                 this.endOfMessageReached = true;
-                this.EncryptionKey = this.encryptionKey.ToString();
+                EncryptionKey = this.encryptionKey.ToString();
             }
         }
 
