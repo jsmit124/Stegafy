@@ -127,7 +127,7 @@ namespace GroupNStegafy.Controller
             if (this.SourceImage != null)
             {
                 var sourceImagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.sourceImageFile);
-                this.messageEmbedder.SetSourceImagePixels(sourceImagePixels);
+                this.messageEmbedder.SourceImagePixels = sourceImagePixels;
             }
         }
 
@@ -148,7 +148,7 @@ namespace GroupNStegafy.Controller
             this.SourceImage = sourceImage;
 
             var sourceImagePixels = await PixelExtracter.ExtractPixelDataFromFile(this.sourceImageFile);
-            this.messageEmbedder.SetSourceImagePixels(sourceImagePixels);
+            this.messageEmbedder.SourceImagePixels = sourceImagePixels;
 
             await this.setSourceImageSizeValues();
         }

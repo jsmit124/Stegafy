@@ -23,7 +23,7 @@ namespace GroupNStegafy.Model.Embedding
         ///     Gets or sets the source image pixels.
         /// </summary>
         /// <value>The source image pixels.</value>
-        public byte[] SourceImagePixels { get; protected set; }
+        public byte[] SourceImagePixels;
 
         /// <summary>
         ///     Gets or sets the embedded image.
@@ -89,18 +89,6 @@ namespace GroupNStegafy.Model.Embedding
         protected bool IsSecondPixel(int currX, int currY)
         {
             return currY == 0 && currX == 1;
-        }
-
-        /// <summary>
-        ///     Sets the source image pixels.
-        /// </summary>
-        /// @Precondition none
-        /// @Postcondition none
-        /// <param name="sourceImagePixels">The source image pixels.</param>
-        public void SetSourceImagePixels(byte[] sourceImagePixels)
-        {
-            //TODO can probably turn this into something to do with property
-            this.SourceImagePixels = sourceImagePixels;
         }
 
         /// <summary>
