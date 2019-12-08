@@ -9,6 +9,16 @@ namespace GroupNStegafy.Model.Embedding
     /// </summary>
     public abstract class MessageEmbedder
     {
+        #region Data members
+
+        /// <summary>
+        ///     Gets or sets the source image pixels.
+        /// </summary>
+        /// <value>The source image pixels.</value>
+        public byte[] SourceImagePixels;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -18,12 +28,6 @@ namespace GroupNStegafy.Model.Embedding
         ///     <c>true</c> if [message too large]; otherwise, <c>false</c>.
         /// </value>
         public bool MessageTooLarge { get; protected set; }
-
-        /// <summary>
-        ///     Gets or sets the source image pixels.
-        /// </summary>
-        /// <value>The source image pixels.</value>
-        public byte[] SourceImagePixels;
 
         /// <summary>
         ///     Gets or sets the embedded image.
