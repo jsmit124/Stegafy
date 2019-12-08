@@ -13,6 +13,12 @@ namespace GroupNStegafy.Model.Embedding
     /// <seealso cref="MessageEmbedder" />
     public class MonochromeImageEmbedder : MessageEmbedder
     {
+        #region Data members
+
+        private bool isEncrypted;
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -30,6 +36,8 @@ namespace GroupNStegafy.Model.Embedding
         public override async Task EmbedMessageInImage(byte[] messagePixels, uint messageImageWidth,
             uint messageImageHeight, uint sourceImageWidth, uint sourceImageHeight, bool encryptionIsChecked, int bpcc)
         {
+            this.isEncrypted = encryptionIsChecked;
+
             if (messageImageWidth > sourceImageWidth || messageImageHeight > sourceImageHeight)
             {
                 await Dialogs.ShowMessageFileTooLargeDialog();
@@ -71,6 +79,11 @@ namespace GroupNStegafy.Model.Embedding
         {
             if (currX < messageImageWidth && currY < messageImageHeight)
             {
+                if (this.isEncrypted)
+                {
+                    currY = swapYQuadrant(currY, messageImageHeight);
+                }
+
                 var messagePixelColor = PixelColorInfo.GetPixelBgra8(messagePixels, currY,
                     currX, messageImageWidth);
 
@@ -85,6 +98,21 @@ namespace GroupNStegafy.Model.Embedding
             }
 
             return sourcePixelColor;
+        }
+
+        private static int swapYQuadrant(int currY, uint messageImageHeight)
+        {
+            var halfMessageHeight = (int) messageImageHeight / 2;
+            if (currY >= halfMessageHeight)
+            {
+                currY -= halfMessageHeight;
+            }
+            else if (currY < halfMessageHeight)
+            {
+                currY += halfMessageHeight;
+            }
+
+            return currY;
         }
 
         private static bool isWhitePixel(Color messagePixelColor)

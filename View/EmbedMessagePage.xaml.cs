@@ -100,6 +100,10 @@ namespace GroupNStegafy.View
             var bpccSelection = (ComboBoxItem) this.BPCCSelectionComboBox.SelectedItem;
             var bpcc = int.Parse(bpccSelection.Content.ToString());
             var encryptionKey = this.encryptionKeyTextBox.Text;
+            if (string.IsNullOrEmpty(encryptionKey))
+            {
+                encryptionKey = "CS";
+            }
 
             if (encryptionIsChecked && encryptionKey.Equals(string.Empty) &&
                 this.embedManager.MessageFileType.Equals(FileTypeConstants.TextFileType))

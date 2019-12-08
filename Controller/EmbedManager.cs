@@ -190,17 +190,6 @@ namespace GroupNStegafy.Controller
                 var messageImageWidth = messageDecoder.PixelWidth;
                 var messageImageHeight = messageDecoder.PixelHeight;
 
-                if (encryptionSelected)
-                {
-                    var halfMessageLength = messagePixels.Length / 2;
-                    var bottomHalf = messagePixels.Skip(halfMessageLength);
-                    var topHalf = new byte[halfMessageLength];
-                    Array.Copy(messagePixels, 0, topHalf, 0, halfMessageLength);
-
-                    var swappedImage = bottomHalf.Union(topHalf);
-                    messagePixels = (byte[]) swappedImage;
-                }
-
                 await this.messageEmbedder.EmbedMessageInImage(messagePixels, messageImageWidth, messageImageHeight,
                     this.sourceImageWidth, this.sourceImageHeight, encryptionSelected, bpcc);
             }
