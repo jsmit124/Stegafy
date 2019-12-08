@@ -44,7 +44,8 @@ namespace GroupNStegafy.View
 
         private void homeButton_click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MainPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft });
+            Frame.Navigate(typeof(MainPage), null,
+                new SlideNavigationTransitionInfo {Effect = SlideNavigationTransitionEffect.FromLeft});
         }
 
         private async void loadEmbeddedImageButton_Click(object sender, RoutedEventArgs e)
@@ -69,6 +70,7 @@ namespace GroupNStegafy.View
                 {
                     //TODO handle displaying decrypted image
                 }
+
                 this.decryptedImageDisplay.Source = this.extractManager.ExtractedImage;
                 this.saveDecryptedMessageButton.IsEnabled = true;
             }

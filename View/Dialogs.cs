@@ -14,6 +14,8 @@ namespace GroupNStegafy.View
         /// <summary>
         ///     Shows the message file too large dialog.
         /// </summary>
+        /// Precondition: none
+        /// Postcondition: none
         public static async Task ShowMessageFileTooLargeDialog()
         {
             var messageFileTooLargeDialog = new ContentDialog {
@@ -30,6 +32,8 @@ namespace GroupNStegafy.View
         /// <summary>
         ///     Shows the file selection cancelled dialog.
         /// </summary>
+        /// Precondition: none
+        /// Postcondition: none
         /// <param name="imageType">Type of the image.</param>
         public static async Task ShowFileSelectionCancelledDialog(string imageType)
         {
@@ -45,6 +49,8 @@ namespace GroupNStegafy.View
         /// <summary>
         ///     Shows the no message dialog.
         /// </summary>
+        /// Precondition: none
+        /// Postcondition: none
         public static async Task ShowNoMessageDialog()
         {
             var noMessageDialog = new ContentDialog {
@@ -59,6 +65,8 @@ namespace GroupNStegafy.View
         /// <summary>
         ///     Shows the not possible to embed text into source image dialog.
         /// </summary>
+        /// Precondition: none
+        /// Postcondition: none
         public static async Task ShowNotPossibleToEmbedTextDialog()
         {
             var notPossibletoEmbedTextDialog = new ContentDialog {
@@ -74,6 +82,8 @@ namespace GroupNStegafy.View
         /// <summary>
         ///     Shows the required bpcc to embed text into source image dialog.
         /// </summary>
+        /// Precondition: none
+        /// Postcondition: none
         public static async Task ShowRequiredBpccToEmbedTextDialog(int requiredBpcc)
         {
             var requiredBpccDialog = new ContentDialog {
@@ -90,10 +100,11 @@ namespace GroupNStegafy.View
         /// <summary>
         ///     Shows the error no encryption key dialog.
         /// </summary>
+        /// Precondition: none
+        /// Postcondition: none
         public static async Task ShowNoEncryptionKeyInput()
         {
-            var noKeyDialog = new ContentDialog
-            {
+            var noKeyDialog = new ContentDialog {
                 Title = "ERROR",
                 Content = "No encryption key was input. Please input a key to use for encryption.",
                 CloseButtonText = "Ok"

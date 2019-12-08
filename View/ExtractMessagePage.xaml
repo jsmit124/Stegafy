@@ -10,45 +10,50 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="19*"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="19*" />
         </Grid.RowDefinitions>
         <Grid Row="0">
             <CommandBar>
-                <AppBarToggleButton Icon="Home" Label="Home" Click="homeButton_click" Style="{ThemeResource AppBarToggleButtonRevealStyle}"/>
+                <AppBarToggleButton Icon="Home" Label="Home" Click="homeButton_click"
+                                    Style="{ThemeResource AppBarToggleButtonRevealStyle}" />
                 <CommandBar.Content>
-                    <TextBlock Text="Extract Image" Margin="5,5" FontSize="22"/>
+                    <TextBlock Text="Extract Image" Margin="5,5" FontSize="22" />
                 </CommandBar.Content>
             </CommandBar>
         </Grid>
         <Grid Row="1">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="9*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="9*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="9*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="9*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0"/>
-                <Button Content="Load Embedded Image" Grid.Row="1" Grid.Column="0" Click="loadEmbeddedImageButton_Click" Style="{ThemeResource ButtonRevealStyle}"/>
+                <Image x:Name="embeddedImageDisplay" Grid.Row="0" Grid.Column="0" />
+                <Button Content="Load Embedded Image" Grid.Row="1" Grid.Column="0"
+                        Click="loadEmbeddedImageButton_Click" Style="{ThemeResource ButtonRevealStyle}" />
 
-                <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1"/>
+                <TextBlock x:Name="encryptionKeyWordTextBlock" Grid.Row="0" Grid.Column="1" />
 
-                <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0"/>
-                <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap"/>
+                <Image x:Name="encryptedMessageImageDisplay" Grid.Row="2" Grid.Column="0" />
+                <TextBlock x:Name="encryptedMessageTextBlock" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" />
 
-                <Image x:Name="decryptedImageDisplay" Grid.Row="2" Grid.Column="1"/>
-                <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1"/>
-                <Button x:Name="saveDecryptedMessageButton" IsEnabled="False" Content="Save Message" Grid.Row="3" Grid.Column="1" Click="saveDecryptedMessageButton_Click" Style="{ThemeResource ButtonRevealStyle}"/>
-                <Button x:Name="extractButton" IsEnabled="False" Content="Extract" Grid.Row="1" Margin="200,0,0,0" Click="extractButton_Click" Style="{ThemeResource ButtonRevealStyle}"/>
+                <Image x:Name="decryptedImageDisplay" Grid.Row="2" Grid.Column="1" />
+                <TextBlock x:Name="decryptedMessageTextBlock" Grid.Row="2" Grid.Column="1" />
+                <Button x:Name="saveDecryptedMessageButton" IsEnabled="False" Content="Save Message" Grid.Row="3"
+                        Grid.Column="1" Click="saveDecryptedMessageButton_Click"
+                        Style="{ThemeResource ButtonRevealStyle}" />
+                <Button x:Name="extractButton" IsEnabled="False" Content="Extract" Grid.Row="1" Margin="200,0,0,0"
+                        Click="extractButton_Click" Style="{ThemeResource ButtonRevealStyle}" />
             </Grid>
         </Grid>
-        
+
     </Grid>
-    
+
 </Page>

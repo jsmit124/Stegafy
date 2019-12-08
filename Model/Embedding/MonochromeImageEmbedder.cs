@@ -18,6 +18,8 @@ namespace GroupNStegafy.Model.Embedding
         /// <summary>
         ///     Embeds the message in image.
         /// </summary>
+        /// @Precondition none
+        /// @Postcondition the message is embedded into the image
         /// <param name="messagePixels">The message pixels.</param>
         /// <param name="messageImageWidth">Width of the message image.</param>
         /// <param name="messageImageHeight">Height of the message image.</param>

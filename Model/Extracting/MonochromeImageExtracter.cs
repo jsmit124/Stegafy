@@ -7,11 +7,29 @@ using GroupNStegafy.View;
 
 namespace GroupNStegafy.Model.Extracting
 {
+    /// <summary>
+    ///     Stores information for the MonochromeImageExtractor class
+    /// </summary>
+    /// <seealso cref="GroupNStegafy.Model.Extracting.MessageExtracter" />
     public class MonochromeImageExtracter : MessageExtracter
     {
+        #region Data members
+
         private readonly Color whitePixel = Color.FromArgb(255, 255, 255, 255);
         private readonly Color blackPixel = Color.FromArgb(255, 0, 0, 0);
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     Extracts the message from image.
+        /// </summary>
+        /// @Precondition none
+        /// @postcondition message is extracted from the image
+        /// <param name="embeddedPixels">The embedded pixels.</param>
+        /// <param name="embeddedImageWidth">Width of the embedded image.</param>
+        /// <param name="embeddedImageHeight">Height of the embedded image.</param>
         public override async Task ExtractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth,
             uint embeddedImageHeight)
         {
@@ -33,7 +51,7 @@ namespace GroupNStegafy.Model.Extracting
                     }
                     else if (isSecondPixel(currY, currX))
                     {
-                        this.EncryptionUsed = (embeddedPixelColor.R & 1) == 0;
+                        EncryptionUsed = (embeddedPixelColor.R & 1) == 0;
                     }
                     else
                     {
@@ -52,9 +70,9 @@ namespace GroupNStegafy.Model.Extracting
                 }
             }
 
-            this.ExtractedImage =
-                new WriteableBitmap((int)embeddedImageWidth, (int)embeddedImageHeight);
-            using (var writeStream = this.ExtractedImage.PixelBuffer.AsStream())
+            ExtractedImage =
+                new WriteableBitmap((int) embeddedImageWidth, (int) embeddedImageHeight);
+            using (var writeStream = ExtractedImage.PixelBuffer.AsStream())
             {
                 await writeStream.WriteAsync(embeddedPixels, 0, embeddedPixels.Length);
             }
@@ -64,5 +82,7 @@ namespace GroupNStegafy.Model.Extracting
         {
             return (bits & (1 << pos)) != 0;
         }
+
+        #endregion
     }
 }

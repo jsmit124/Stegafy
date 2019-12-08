@@ -1,25 +1,37 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
+using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
 using GroupNStegafy.Cryptography;
 using GroupNStegafy.Utility;
 using GroupNStegafy.View;
-using Windows.UI;
-using GroupNStegafy.Constants;
 
 namespace GroupNStegafy.Model.Extracting
 {
+    /// <summary>
+    ///     Stores information for the TextFileExtractor class
+    /// </summary>
+    /// <seealso cref="GroupNStegafy.Model.Extracting.MessageExtracter" />
     public class TextFileExtracter : MessageExtracter
     {
+        #region Data members
+
         private int bpcc;
         private BitArray embeddedBits;
         private readonly StringBuilder peek;
         private readonly StringBuilder embeddedMessage;
         private bool endOfMessageReached;
 
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TextFileExtracter" /> class.
+        /// </summary>
         public TextFileExtracter()
         {
             this.peek = new StringBuilder(8);
@@ -27,6 +39,18 @@ namespace GroupNStegafy.Model.Extracting
             this.endOfMessageReached = false;
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     Extracts the message from image.
+        /// </summary>
+        /// <param name="embeddedPixels">The embedded pixels.</param>
+        /// <param name="embeddedImageWidth">Width of the embedded image.</param>
+        /// <param name="embeddedImageHeight">Height of the embedded image.</param>
+        /// @Precondition none
+        /// @Postcondition message is extracted from the image
         public override async Task ExtractMessageFromImage(byte[] embeddedPixels, uint embeddedImageWidth,
             uint embeddedImageHeight)
         {
@@ -51,12 +75,13 @@ namespace GroupNStegafy.Model.Extracting
                         await Dialogs.ShowNoMessageDialog();
                         return;
                     }
-                    else if (isSecondPixel(currY, currX))
+
+                    if (isSecondPixel(currY, currX))
                     {
-                        this.EncryptionUsed = (embeddedPixelColor.R & 1) != 0;
+                        EncryptionUsed = (embeddedPixelColor.R & 1) != 0;
                         this.bpcc = BinaryDecimalConverter.CalculateBpccFromBinary(embeddedPixelColor.G);
 
-                        var numberOfBits = (((embeddedImageWidth * embeddedImageHeight) - 2) * 3) * this.bpcc;
+                        var numberOfBits = (embeddedImageWidth * embeddedImageHeight - 2) * 3 * this.bpcc;
                         this.embeddedBits = new BitArray((int) numberOfBits);
                     }
                     else
@@ -76,13 +101,13 @@ namespace GroupNStegafy.Model.Extracting
 
         private void handleReachedEndOfMessage(StringBuilder encryptionPassword)
         {
-            if (this.EncryptionUsed)
+            if (EncryptionUsed)
             {
-                this.DecryptedText = TextCryptography.Decrypt(encryptionPassword.ToString(),
+                DecryptedText = TextCryptography.Decrypt(encryptionPassword.ToString(),
                     this.embeddedMessage.ToString());
             }
 
-            this.ExtractedText = this.embeddedMessage.ToString();
+            ExtractedText = this.embeddedMessage.ToString();
         }
 
         private void extractMessageBitsFromPixel(Color embeddedPixelColor, int count)
@@ -103,7 +128,7 @@ namespace GroupNStegafy.Model.Extracting
                     color = embeddedPixelColor.B;
                 }
 
-                var colorByte = new byte[] {color};
+                var colorByte = new[] {color};
                 var colorBits = new BitArray(colorByte);
 
                 for (var j = 0; j < this.bpcc; j++)
@@ -130,8 +155,8 @@ namespace GroupNStegafy.Model.Extracting
                 currIndex++;
             }
 
-            var extractedLetter = BinaryStringConverter.BitArrayToStr(peekBits);
-            
+            var extractedLetter = BinaryStringConverter.BitArrayToString(peekBits);
+
             if (this.peek.Length == 8)
             {
                 this.embeddedMessage.Append(this.peek.ToString().Substring(0, 1));
@@ -150,6 +175,7 @@ namespace GroupNStegafy.Model.Extracting
                 this.endOfMessageReached = true;
             }
         }
+
+        #endregion
     }
 }
-

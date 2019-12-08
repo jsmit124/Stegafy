@@ -5,7 +5,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Controller;
-using GroupNStegafy.Enumerables;
 
 namespace GroupNStegafy.View
 {
@@ -102,7 +101,8 @@ namespace GroupNStegafy.View
             var bpcc = int.Parse(bpccSelection.Content.ToString());
             var encryptionKey = this.encryptionKeyTextBox.Text;
 
-            if (encryptionIsChecked && encryptionKey.Equals(string.Empty) && this.embedManager.MessageFileType.Equals(FileTypeConstants.TextFileType))
+            if (encryptionIsChecked && encryptionKey.Equals(string.Empty) &&
+                this.embedManager.MessageFileType.Equals(FileTypeConstants.TextFileType))
             {
                 await Dialogs.ShowNoEncryptionKeyInput();
                 this.progressRing.IsActive = false;

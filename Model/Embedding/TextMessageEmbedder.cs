@@ -16,11 +16,19 @@ namespace GroupNStegafy.Model.Embedding
     /// <seealso cref="MessageEmbedder" />
     public class TextMessageEmbedder : MessageEmbedder
     {
+        #region Data members
+
+        private int currentByteIndex;
+
+        #endregion
+
         #region Methods
 
         /// <summary>
         ///     Embeds the text message in image.
         /// </summary>
+        /// @Precondition none
+        /// @Postcondition the message is embedded into the image
         /// <param name="messageData">The message data.</param>
         /// <param name="messageLength">Length of the message.</param>
         /// <param name="messageImageHeight">Height of the message image.</param>
@@ -33,12 +41,13 @@ namespace GroupNStegafy.Model.Embedding
         public override async Task EmbedMessageInImage(byte[] messageData, uint messageLength, uint messageImageHeight,
             uint sourceImageWidth, uint sourceImageHeight, bool encryptionIsChecked, int bpcc)
         {
-            var messageBits = new BitArray(messageData);
             var totalAvailableSourcePixels = sourceImageWidth * sourceImageHeight - 2;
+            this.currentByteIndex = 0;
+            var numberOfBits = messageData.Length * 8;
 
-            if (messageBits.Count / bpcc > totalAvailableSourcePixels * 3)
+            if (numberOfBits / bpcc > totalAvailableSourcePixels * 3)
             {
-                var requiredBpcc = this.calculateBpccRequiredToEmbedText(messageBits.Count, totalAvailableSourcePixels);
+                var requiredBpcc = this.calculateBpccRequiredToEmbedText(numberOfBits, totalAvailableSourcePixels);
                 if (requiredBpcc > 8)
                 {
                     await Dialogs.ShowNotPossibleToEmbedTextDialog();
@@ -72,7 +81,7 @@ namespace GroupNStegafy.Model.Embedding
                     }
                     else
                     {
-                        sourcePixelColor = this.embedTextMessage(messageBits, sourcePixelColor, currentIndex, bpcc);
+                        sourcePixelColor = this.embedTextMessage(messageData, sourcePixelColor, currentIndex, bpcc);
                         currentIndex += 3 * bpcc;
                     }
 
@@ -83,11 +92,11 @@ namespace GroupNStegafy.Model.Embedding
             await SetEmbeddedImage(sourceImageHeight, sourceImageWidth);
         }
 
-        private Color embedTextMessage(BitArray messageBits, Color sourcePixelColor, int currentIndex, int bpcc)
+        private Color embedTextMessage(byte[] messageData, Color sourcePixelColor, int currentIndex, int bpcc)
         {
             foreach (var i in Enumerable.Range(0, 3))
             {
-                if (currentIndex < messageBits.Count) // if the current index is less than the amount of bits in the text, continue
+                if (currentIndex < messageData.Length * 8) // can probably remove this if
                 {
                     byte color;
 
@@ -104,15 +113,22 @@ namespace GroupNStegafy.Model.Embedding
                         color = sourcePixelColor.B;
                     }
 
-                    var leadingRemoved = color >> bpcc;
-                    leadingRemoved <<= bpcc; // add leading bpcc amount of bits as zeros
+                    color >>= bpcc;
+                    color <<= bpcc;
 
-                    var bitsToAdd = new BitArray(8); // create temp bit array
-                    for (var j = 0; j < bpcc; j++) // 
+                    var bitsToAdd = new BitArray(8);
+                    for (var j = 0; j < bpcc; j++)
                     {
-                        if (currentIndex + j < messageBits.Count)
+                        if (currentIndex + j < messageData.Length * 8)
                         {
-                            bitsToAdd.Set(j, messageBits[currentIndex + j]);
+                            var currentByte = messageData[this.currentByteIndex];
+                            var currentBit = isBitSet(currentByte, currentIndex % 8);
+                            bitsToAdd.Set(j, currentBit);
+
+                            if (currentIndex != 0 && (currentIndex + j) % 8 == 0)
+                            {
+                                this.currentByteIndex++;
+                            }
                         }
                         else
                         {
@@ -123,8 +139,7 @@ namespace GroupNStegafy.Model.Embedding
                     var bitsAsByte = new byte[1]; //create empty byte
                     bitsToAdd.CopyTo(bitsAsByte, 0); //set byte to specified number of bits
 
-                    leadingRemoved |= bitsAsByte[0];
-                    color = (byte) leadingRemoved;
+                    color |= bitsAsByte[0];
 
                     if (i == 0)
                     {
@@ -141,7 +156,6 @@ namespace GroupNStegafy.Model.Embedding
 
                     currentIndex += bpcc;
                 }
-
             }
 
             return sourcePixelColor;
@@ -157,6 +171,11 @@ namespace GroupNStegafy.Model.Embedding
             }
 
             return requiredBpcc;
+        }
+
+        private static bool isBitSet(byte bits, int pos)
+        {
+            return (bits & (1 << pos)) != 0;
         }
 
         #endregion

@@ -1,10 +1,6 @@
-﻿using System;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.UI.Core;
+﻿using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace GroupNStegafy.View
@@ -14,9 +10,12 @@ namespace GroupNStegafy.View
     /// </summary>
     public sealed partial class MainPage
     {
+        #region Data members
 
-        private readonly double applicationHeight = (double)Application.Current.Resources["AppHeight"];
-        private readonly double applicationWidth = (double)Application.Current.Resources["AppWidth"];
+        private readonly double applicationHeight = (double) Application.Current.Resources["AppHeight"];
+        private readonly double applicationWidth = (double) Application.Current.Resources["AppWidth"];
+
+        #endregion
 
         #region Constructors
 
@@ -28,7 +27,7 @@ namespace GroupNStegafy.View
             this.InitializeComponent();
 
             ApplicationView.PreferredLaunchViewSize = new Size
-                { Width = this.applicationWidth, Height = this.applicationHeight };
+                {Width = this.applicationWidth, Height = this.applicationHeight};
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             ApplicationView.GetForCurrentView()
                            .SetPreferredMinSize(new Size(this.applicationWidth, this.applicationHeight));
@@ -36,15 +35,20 @@ namespace GroupNStegafy.View
 
         #endregion
 
+        #region Methods
+
         private void EmbedButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(EmbedMessagePage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft });
+            Frame.Navigate(typeof(EmbedMessagePage), null,
+                new SlideNavigationTransitionInfo {Effect = SlideNavigationTransitionEffect.FromLeft});
         }
 
         private void ExtractButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(ExtractMessagePage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+            Frame.Navigate(typeof(ExtractMessagePage), null,
+                new SlideNavigationTransitionInfo {Effect = SlideNavigationTransitionEffect.FromRight});
         }
-    }
 
+        #endregion
+    }
 }

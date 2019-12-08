@@ -13,11 +13,6 @@
         /// <summary>
         ///     The bitmap file type
         /// </summary>
-        Bitmap,
-
-        /// <summary>
-        ///     The PNG file type
-        /// </summary>
-        PortableNetworkGraphics
+        Bitmap
     }
 }

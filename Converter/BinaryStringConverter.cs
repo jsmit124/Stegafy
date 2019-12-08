@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
 
 namespace GroupNStegafy.Converter
@@ -14,6 +13,8 @@ namespace GroupNStegafy.Converter
         /// <summary>
         ///     Converts the string to binary.
         /// </summary>
+        /// @Precondition none
+        /// @Postcondition none
         /// <param name="text">The text.</param>
         /// <returns>The binary representation of the string</returns>
         public static byte[] ConvertStringToBinary(string text)
@@ -22,30 +23,46 @@ namespace GroupNStegafy.Converter
         }
 
         /// <summary>
-        ///     Converts the binary to string.
+        ///     Bits the array to string.
         /// </summary>
-        /// <param name="stringBytes">The string bytes.</param>
-        /// <returns>The string representation of the binary array</returns>
-        public static string ConvertBinaryToString(byte[] stringBytes)
+        /// @Precondition none
+        /// @Postcondition none
+        /// <param name="bits">The bits.</param>
+        /// <returns>The string representation of the bit array</returns>
+        public static string BitArrayToString(BitArray bits)
         {
-            return Encoding.ASCII.GetString(stringBytes);
-        }
+            var stringArray = new byte[bits.Length / 8];
 
-        public static string BitArrayToStr(BitArray ba)
-        {
-            byte[] strArr = new byte[ba.Length / 8];
+            var encoding = new ASCIIEncoding();
 
-            ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
-
-            for (int i = 0; i < ba.Length / 8; i++)
+            for (var i = 0; i < bits.Length / 8; i++)
             {
-                for (int index = i * 8, m = 1; index < i * 8 + 8; index++, m *= 2)
+                for (int index = i * 8, j = 1; index < i * 8 + 8; index++, j *= 2)
                 {
-                    strArr[i] += ba.Get(index) ? (byte)m : (byte)0;
+                    stringArray[i] += bits.Get(index) ? (byte) j : (byte) 0;
                 }
             }
 
-            return encoding.GetString(strArr);
+            return encoding.GetString(stringArray);
+        }
+
+        /// <summary>
+        ///     Reverses the byte.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// @Precondition none
+        /// @Postcondition none
+        /// <returns>the reversed byte</returns>
+        public static BitArray ReverseByte(BitArray input)
+        {
+            var bar = new BitArray(8);
+
+            for (var i = 0; i < 8; i++)
+            {
+                bar[i] = input[8 - i - 1];
+            }
+
+            return bar;
         }
 
         #endregion

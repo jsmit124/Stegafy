@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Appointments;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using GroupNStegafy.Constants;
 using GroupNStegafy.Converter;
 using GroupNStegafy.Formatter;
 using GroupNStegafy.IO;
-using GroupNStegafy.Model;
 using GroupNStegafy.Model.Embedding;
 using GroupNStegafy.Utility;
 
@@ -101,6 +92,8 @@ namespace GroupNStegafy.Controller
 
         /// <summary>
         ///     Saves the embedded image.
+        ///     @Precondition none
+        ///     @Postcondition embedded image is saved
         /// </summary>
         public void SaveEmbeddedImage()
         {
@@ -109,6 +102,8 @@ namespace GroupNStegafy.Controller
 
         /// <summary>
         ///     Loads the message.
+        ///     @Precondition none
+        ///     @Postcondition message file is loaded into the program
         /// </summary>
         public async Task LoadMessage()
         {
@@ -138,6 +133,8 @@ namespace GroupNStegafy.Controller
 
         /// <summary>
         ///     Loads the source image.
+        ///     @Precondition none
+        ///     @Postcondition source image is loaded into the program
         /// </summary>
         public async Task LoadSourceImage()
         {
@@ -156,10 +153,11 @@ namespace GroupNStegafy.Controller
             await this.setSourceImageSizeValues();
         }
 
-
         /// <summary>
         ///     Embeds the message.
         /// </summary>
+        /// @Precondition this.messageFile != null && this.sourceFile != null
+        /// @Postcondition message is embedded and shown in the program
         /// <param name="encryptionSelected">if set to <c>true</c> [encryption selected].</param>
         /// <param name="bpcc">The BPCC.</param>
         /// <param name="encryptionKey">The encryption key.</param>
@@ -170,7 +168,8 @@ namespace GroupNStegafy.Controller
                 string formattedText;
                 if (encryptionSelected)
                 {
-                    formattedText = EmbedTextFormatter.FormatEncryptedTextForEmbedding(encryptionKey, this.TextFromFile);
+                    formattedText =
+                        EmbedTextFormatter.FormatEncryptedTextForEmbedding(encryptionKey, this.TextFromFile);
                 }
                 else
                 {
@@ -226,6 +225,8 @@ namespace GroupNStegafy.Controller
         /// <summary>
         ///     Checks to see if the messageFile is loaded
         /// </summary>
+        /// @Precondition none
+        /// @Postcondition none
         /// <returns>true if the messageFile != null; false otherwise</returns>
         public bool MessageLoaded()
         {
@@ -235,6 +236,8 @@ namespace GroupNStegafy.Controller
         /// <summary>
         ///     Checks to see if the sourceImageFile is loaded
         /// </summary>
+        /// @Precondition none
+        /// @Postcondition none
         /// <returns>true if the sourceImageFile is loaded; false otherwise</returns>
         public bool SourceImageLoaded()
         {
